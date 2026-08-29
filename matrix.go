@@ -19,6 +19,9 @@ type Matrix struct {
 	BlockDirection  int
 	blocks          []Block
 	currentBlockPtr int
+	Collided        bool
+	MovesCount      int
+	RowsCompleted   int
 }
 
 func NewMatrix(width int, height int, term *Terminal) Matrix {
@@ -27,7 +30,7 @@ func NewMatrix(width int, height int, term *Terminal) Matrix {
 	for i := range m.content {
 		m.content[i] = make([]string, width)
 		for j := range m.content[i] {
-			m.content[i][j] = BLOCK_EMPTY
+			m.content[i][j] = BL_NIL
 		}
 	}
 	m.blocks = InitBlocks()
@@ -36,6 +39,8 @@ func NewMatrix(width int, height int, term *Terminal) Matrix {
 }
 
 func (m *Matrix) PickRandomBlock() {
+	m.Collided = false
+	m.MovesCount = 0
 	m.currentBlockPtr = rand.Intn(len(m.blocks))
 	b := m.blocks[m.currentBlockPtr]
 	m.block = b.Clone()
@@ -103,7 +108,7 @@ func (m *Matrix) RemoveBlockAtCenter() {
 	// remove the block at the center position
 	for i, row := range m.block.Shape {
 		for j := range row {
-			m.UpdateContent(centerX+j, centerY+i, BLOCK_EMPTY)
+			m.UpdateContent(centerX+j, centerY+i, BL_NIL)
 		}
 	}
 }
@@ -111,7 +116,9 @@ func (m *Matrix) RemoveBlockAtCenter() {
 func (m *Matrix) RemoveBlock() {
 	for i, row := range m.block.Shape {
 		for j := range row {
-			m.UpdateContent(m.blockX+j, m.blockY+i, BLOCK_EMPTY)
+			if m.block.Shape[i][j] == BL_FIL {
+				m.UpdateContent(m.blockX+j, m.blockY+i, BL_NIL)
+			}
 		}
 	}
 }
@@ -119,7 +126,9 @@ func (m *Matrix) RemoveBlock() {
 func (m *Matrix) PutBlock() {
 	for i, row := range m.block.Shape {
 		for j := range row {
-			m.UpdateContent(m.blockX+j, m.blockY+i, m.block.Shape[i][j])
+			if m.block.Shape[i][j] == BL_FIL {
+				m.UpdateContent(m.blockX+j, m.blockY+i, m.block.Shape[i][j])
+			}
 		}
 	}
 }
@@ -128,13 +137,10 @@ func (m *Matrix) PutBlock() {
 func (m *Matrix) WillCollide(x, y int) bool {
 	for i, row := range m.block.Shape {
 		for j, c := range row {
-			if c == BLOCK_FILLED {
+			if c == BL_FIL {
 				newX := x + j
 				newY := y + i
-				if newX < 0 || newX >= m.width || newY < 0 || newY >= m.height {
-					return true
-				}
-				if m.content[newY][newX] == BLOCK_FILLED {
+				if m.content[newY][newX] == BL_FIL {
 					return true
 				}
 			}
@@ -144,6 +150,14 @@ func (m *Matrix) WillCollide(x, y int) bool {
 }
 
 // --- MOVE BLOCK FUNCTIONS
+// --- IS LEGAL MOVE or DO WE HIT ANOTHER BLOCK?
+//
+// In a simple and generic way we can move it to the next place and check that
+// no BLOCK_FILLED on the shape hits a BLOCK_FILLED on the matrix on the next
+// position.
+// Key decision:
+// - MoveBlockX/Y will do the actual move.
+// - NextX/Y will return the next coordinate
 func (m *Matrix) NextX(direction int) int {
 	nextX := m.blockX
 	if direction == BLOCK_DIRECTION_LEFT && m.blockX > 0 {
@@ -155,6 +169,7 @@ func (m *Matrix) NextX(direction int) int {
 	}
 
 	if m.WillCollide(nextX, m.blockY) {
+		m.Collided = true
 		return m.blockX
 	}
 
@@ -173,10 +188,36 @@ func (m *Matrix) NextY(direction int) int {
 	}
 
 	if m.WillCollide(m.blockX, nextY) {
+		m.Collided = true
 		return m.blockY
 	}
 
 	return nextY
+}
+
+func (m *Matrix) CheckForFullRows() {
+	removed := true
+	for removed {
+		removed = false
+		for y := 0; y < m.height; y++ {
+			full := true
+			for x := 0; x < m.width && full; x++ {
+				full = full && m.content[y][x] != BL_NIL
+			}
+			if full {
+				removed = true
+				for ny := y; ny < m.height-1; ny++ {
+					for nx := 0; nx < m.width; nx++ {
+						uy := ny + 1
+						m.UpdateContent(nx, ny, m.content[uy][nx])
+						m.UpdateContent(nx, uy, BL_NIL)
+					}
+				}
+				m.RowsCompleted++
+			}
+		}
+	}
+
 }
 
 func (m *Matrix) MoveBlockX(direction int) {
@@ -192,18 +233,10 @@ func (m *Matrix) MoveBlockY(direction int) {
 }
 
 func (m *Matrix) MoveBlock() {
+	m.MovesCount++
 	m.MoveBlockY(m.BlockDirection)
-	m.terminal.StatusBar(fmt.Sprintf("%d %d", m.blockX, m.blockY))
+	m.terminal.StatusBar(fmt.Sprintf("%d rows completed", m.RowsCompleted))
 }
-
-// --- IS LEGAL MOVE or DO WE HIT ANOTHER BLOCK?
-//
-// In a simple and generic way we can move it to the next place and check that
-// no BLOCK_FILLED on the shape hits a BLOCK_FILLED on the matrix on the next
-// position.
-// Key decision:
-// - MoveBlockX/Y will do the actual move.
-// - NextX/Y will return the next coordinate
 
 func (m *Matrix) PlaceBlockAtBottom() {
 	bottomX := ((m.width - m.block.Width()) / 2)
@@ -244,7 +277,7 @@ func (m *Matrix) Dump() {
 	for i := range m.content {
 		for j := range m.content[i] {
 			c := m.content[i][j]
-			if c == BLOCK_EMPTY {
+			if c == BL_NIL {
 				c = "."
 			}
 			fmt.Printf("%s", c)

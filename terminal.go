@@ -120,12 +120,12 @@ func (t *Terminal) SetCursorOn() {
 func (t *Terminal) DrawBoard(width, height int) {
 
 	// this is the timer row
-	fmt.Printf("[%s]\r\n", strings.Repeat(BLOCK_EMPTY+BLOCK_EMPTY, width))
+	fmt.Printf("[%s]\r\n", strings.Repeat(BL_NIL+BL_NIL, width))
 
 	// first frame row +---...---+
 	fmt.Printf("+%s+\r\n", strings.Repeat("--", width))
 	for i := 1; i <= height; i++ {
-		fmt.Printf("|%s|\r\n", strings.Repeat(BLOCK_EMPTY+BLOCK_EMPTY, width))
+		fmt.Printf("|%s|\r\n", strings.Repeat(BL_NIL+BL_NIL, width))
 	}
 	// last frame row +---...---+
 	fmt.Printf("+%s+\r\n", strings.Repeat("--", width))
@@ -153,8 +153,7 @@ func (t *Terminal) Timer(timeString string) {
 	t.clockPtr = (t.clockPtr + 1) % len(chars)
 }
 
-func (t *Terminal) StatusBar(c string) {
-	content := fmt.Sprintf("start row/col: %d, %d | timer row: %d | %s", t.boardStartRow, t.boardStartCol, t.boardTimerRow, c)
+func (t *Terminal) StatusBar(content string) {
 	t.PrintAt(t.boardStatusRow, 0, content)
 }
 

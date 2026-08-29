@@ -81,33 +81,93 @@ func InitBlocks() []Block {
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_EMPTY, BLOCK_EMPTY},
-				[]string{BLOCK_EMPTY, BLOCK_EMPTY, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
+				[]string{BL_FIL, BL_FIL, BL_NIL},
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_NIL, BL_FIL, BL_FIL},
 			},
 		},
 		Block{
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_FIL, BL_FIL, BL_FIL},
 			},
 		},
 		Block{
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
+				[]string{BL_FIL, BL_FIL, BL_FIL},
 			},
 		},
 		Block{
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
-				[]string{BLOCK_EMPTY, BLOCK_EMPTY, BLOCK_FILLED, BLOCK_EMPTY, BLOCK_EMPTY},
-				[]string{BLOCK_EMPTY, BLOCK_EMPTY, BLOCK_FILLED, BLOCK_EMPTY, BLOCK_EMPTY},
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_NIL, BL_FIL, BL_NIL},
+			},
+		},
+		Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
+				[]string{BL_NIL, BL_FIL, BL_NIL},
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_NIL, BL_FIL, BL_NIL},
+			},
+		},
+		Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_NIL, BL_FIL, BL_FIL},
+				[]string{BL_NIL, BL_NIL, BL_FIL},
+			},
+		},
+		Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_NIL, BL_NIL, BL_FIL},
+				[]string{BL_NIL, BL_NIL, BL_FIL},
+			},
+		},
+		Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
+				[]string{BL_FIL, BL_FIL},
+				[]string{BL_NIL, BL_FIL},
+			},
+		},
+		Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
+				[]string{BL_FIL, BL_FIL},
+				[]string{BL_FIL, BL_FIL},
+			},
+		},
+		Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
+				[]string{BL_FIL},
+				[]string{BL_FIL},
+			},
+		},
+		Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_FIL, BL_NIL, BL_FIL},
 			},
 		},
 	}

@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	BOARD_WIDTH           = 10
+	BOARD_WIDTH           = 9
 	BOARD_HEIGHT          = 20
-	BLOCK_EMPTY           = " "
-	BLOCK_FILLED          = "*"
+	BL_NIL                = " "
+	BL_FIL                = "*"
 	KEY_UP                = "\x1b[A"
 	KEY_DOWN              = "\x1b[B"
 	KEY_RIGHT             = "\x1b[C"
@@ -99,6 +99,10 @@ func main() {
 				board.MoveBlockX(BLOCK_DIRECTION_LEFT)
 			case KEY_RIGHT:
 				board.MoveBlockX(BLOCK_DIRECTION_RIGHT)
+			case KEY_UP:
+				for !board.BlockHitTop() && !board.Collided {
+					board.MoveBlock()
+				}
 			case "r":
 				board.RotateBlock()
 			case "s":
@@ -127,7 +131,17 @@ func main() {
 
 			if board.HasBlock() {
 				board.MoveBlock()
-				if board.BlockHitTop() {
+				if board.BlockHitTop() || board.Collided {
+					if board.MovesCount == 1 && board.Collided {
+						fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
+						fmt.Printf("\r\n!!!              !!")
+						fmt.Printf("\r\n!!!  GAME OVER   !!")
+						fmt.Printf("\r\n!!!              !!")
+						fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
+						fmt.Printf("\r\n")
+						return
+					}
+					board.CheckForFullRows()
 					board.PickRandomBlock()
 					board.PlaceBlockAtBottom()
 				}
