@@ -102,17 +102,6 @@ func (m *Matrix) GetBlockCenter() (x, y int) {
 	return centerX, centerY
 }
 
-func (m *Matrix) RemoveBlockAtCenter() {
-	centerX, centerY := m.GetBlockCenter()
-
-	// remove the block at the center position
-	for i, row := range m.block.Shape {
-		for j := range row {
-			m.UpdateContent(centerX+j, centerY+i, BL_NIL)
-		}
-	}
-}
-
 func (m *Matrix) RemoveBlock() {
 	for i, row := range m.block.Shape {
 		for j := range row {
@@ -244,17 +233,6 @@ func (m *Matrix) PlaceBlockAtBottom() {
 	m.PutBlockAt(bottomX, bottomY)
 }
 
-func (m *Matrix) PlaceBlockAtTop() {
-	topX := (m.width - m.block.Width()) / 2
-	topY := 0
-	m.PutBlockAt(topX, topY)
-}
-
-func (m *Matrix) PlaceBlockAtCenter() {
-	centerX, centerY := m.GetBlockCenter()
-	m.PutBlockAt(centerX, centerY)
-}
-
 func (m *Matrix) PutBlockAt(x, y int) {
 	// place the block at position
 	for i, row := range m.block.Shape {
@@ -270,18 +248,4 @@ func (m *Matrix) PutBlockAt(x, y int) {
 func (m *Matrix) UpdateContent(x, y int, c string) {
 	m.content[y][x] = c
 	m.terminal.PrintAtBoard(x, y, c)
-}
-
-func (m *Matrix) Dump() {
-	fmt.Printf("\r\n")
-	for i := range m.content {
-		for j := range m.content[i] {
-			c := m.content[i][j]
-			if c == BL_NIL {
-				c = "."
-			}
-			fmt.Printf("%s", c)
-		}
-		fmt.Printf("\r\n")
-	}
 }

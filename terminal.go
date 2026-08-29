@@ -14,6 +14,8 @@ const (
 	DSR_QUERY_POSITION = "\x1b[6n"
 	DSR_CLEAR_SCREEN   = "\x1b[2J\x1b[H"
 	DSR_GO_XY          = "\x1b[%d;%dH"
+	DSR_OFF_CURSOR     = "\x1b[?25l"
+	DSR_ON_CURSOR      = "\x1b[?25h"
 )
 
 // THE TERMINAL
@@ -89,30 +91,19 @@ func (t *Terminal) ClearScreen() {
 	fmt.Printf(DSR_CLEAR_SCREEN)
 }
 
-func (t *Terminal) ClearLine(row int) {
-	t.PrintAt(row, 0, strings.Repeat(" ", t.width))
-	t.GoBottom()
-}
-
 func (t *Terminal) PrintAt(row, col int, c string) {
 	fmt.Fprintf(os.Stdout, "\x1b[%d;%dH", row, col)
 	fmt.Print(c)
 }
 
-// Usually, the bottom left corner of the screen is a good
-// place to rest the cursor
-func (t *Terminal) GoBottom() {
-	fmt.Fprintf(os.Stdout, "\x1b[%d;%dH", t.height, t.width)
-}
-
 // Turn off the cursor
 func (t *Terminal) SetCursorOff() {
-	fmt.Print("\x1b[?25l")
+	fmt.Print(DSR_OFF_CURSOR)
 }
 
 // Tur on the cursor
 func (t *Terminal) SetCursorOn() {
-	fmt.Print("\x1b[?25h")
+	fmt.Print(DSR_ON_CURSOR)
 }
 
 // Draw the board on the screen and start the basic calculations
@@ -165,11 +156,6 @@ func (t *Terminal) PrintAtBoard(x, y int, c string) {
 	boardRow := t.boardStartRow + y
 	boardCol := t.boardStartCol + (x * 2) + 1
 
-	fmt.Fprintf(os.Stdout, "\x1b[%d;%dH", boardRow, boardCol)
+	fmt.Fprintf(os.Stdout, DSR_GO_XY, boardRow, boardCol)
 	fmt.Print(c)
-}
-
-// Dump some info
-func (t *Terminal) Info() {
-	fmt.Printf("screen size: %dw x %dh", t.width, t.height)
 }
