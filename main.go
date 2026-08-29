@@ -11,23 +11,34 @@ import (
 )
 
 const (
-	BOARD_WIDTH  = 20
-	BOARD_HEIGHT = 40
-	BLOCK_EMPTY  = "."
-	BLOCK_FILLED = "*"
+	BOARD_WIDTH           = 20
+	BOARD_HEIGHT          = 40
+	BLOCK_EMPTY           = " "
+	BLOCK_FILLED          = "*"
+	KEY_UP                = "\x1b[A"
+	KEY_DOWN              = "\x1b[B"
+	KEY_RIGHT             = "\x1b[C"
+	KEY_LEFT              = "\x1b[D"
+	KEY_CTRL_C            = "\x03"
+	KEY_ESC               = "\x1b"
+	BLOCK_DIRECTION_UP    = -1
+	BLOCK_DIRECTION_DOWN  = 1
+	BLOCK_DIRECTION_LEFT  = -1
+	BLOCK_DIRECTION_RIGHT = 1
+	KEY_Q                 = "q"
 )
 
-func readKeys(keys chan<- byte) {
-	buffer := make([]byte, 1)
+func readKeys(keys chan<- string) {
+	buffer := make([]byte, 3)
 
 	for {
-		_, err := os.Stdin.Read(buffer)
+		n, err := os.Stdin.Read(buffer)
 		if err != nil {
 			close(keys)
 			return
 		}
 
-		keys <- buffer[0]
+		keys <- string(buffer[:n])
 	}
 }
 
@@ -67,7 +78,7 @@ func main() {
 	board.BlockDirection = BLOCK_DIRECTION_UP
 
 	// read keys interferes in the getPos() function...
-	keys := make(chan byte, 1)
+	keys := make(chan string, 1)
 	go readKeys(keys)
 
 	startTime := time.Now()
@@ -84,18 +95,21 @@ func main() {
 			}
 
 			switch key {
-			case 'r':
+			case KEY_LEFT:
+				board.MoveBlockX(BLOCK_DIRECTION_LEFT)
+			case KEY_RIGHT:
+				board.MoveBlockX(BLOCK_DIRECTION_RIGHT)
+			case "r":
 				board.RotateBlock()
-			case 's':
+			case "s":
 				board.ChangeBlockShape()
-			case 'q':
-			case 'Q':
+			case "q", "Q":
 				fmt.Printf("\r\nexit key pressed, exiting\r\n")
 				return
-			case '\x03': // Ctrl+C
+			case KEY_CTRL_C:
 				fmt.Printf(" \r\nctrl+c pressed, exiting\r\n")
 				return
-			case '\x1b': // ESC
+			case KEY_ESC:
 				fmt.Printf("\r\nescape key pressed, exiting\r\n")
 				return
 			}

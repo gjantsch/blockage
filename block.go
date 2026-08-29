@@ -4,11 +4,6 @@ import (
 	"fmt"
 )
 
-const (
-	BLOCK_DIRECTION_UP   = -1
-	BLOCK_DIRECTION_DOWN = 1
-)
-
 // THE BLOCK
 // hold a single Block data
 // with position and form
@@ -86,33 +81,33 @@ func InitBlocks() []Block {
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{"*", "*", "*", " ", " "},
-				[]string{" ", " ", "*", "*", "*"},
+				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_EMPTY, BLOCK_EMPTY},
+				[]string{BLOCK_EMPTY, BLOCK_EMPTY, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
 			},
 		},
 		Block{
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{"#", "#", "#"},
-				[]string{"#", "#", "#"},
-				[]string{"#", "#", "#"},
+				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
+				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
+				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
 			},
 		},
 		Block{
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{"*", "*", "*", "*", "*", "*"},
+				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
 			},
 		},
 		Block{
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{"*", "*", "*", "*", "*"},
-				[]string{" ", " ", "*", " ", " "},
-				[]string{" ", " ", "*", " ", " "},
+				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
+				[]string{BLOCK_EMPTY, BLOCK_EMPTY, BLOCK_FILLED, BLOCK_EMPTY, BLOCK_EMPTY},
+				[]string{BLOCK_EMPTY, BLOCK_EMPTY, BLOCK_FILLED, BLOCK_EMPTY, BLOCK_EMPTY},
 			},
 		},
 	}

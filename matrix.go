@@ -124,16 +124,34 @@ func (m *Matrix) PutBlock() {
 	}
 }
 
-func (m *Matrix) MoveBlock() {
-
-	if m.blockY == 0 {
-		return
+func (m *Matrix) MoveBlockX(direction int) {
+	m.RemoveBlock()
+	if direction == BLOCK_DIRECTION_LEFT && m.blockX > 0 {
+		m.blockX--
 	}
 
-	m.RemoveBlock()
-	m.blockY += m.BlockDirection
+	if direction == BLOCK_DIRECTION_RIGHT && m.blockX < m.width-m.block.Width() {
+		m.blockX++
+	}
 
 	m.PutBlock()
+}
+
+func (m *Matrix) MoveBlockY(direction int) {
+	m.RemoveBlock()
+	if direction == BLOCK_DIRECTION_UP && m.blockY > 0 {
+		m.blockY--
+	}
+
+	if direction == BLOCK_DIRECTION_DOWN && m.blockY < m.height-m.block.Height() {
+		m.blockY++
+	}
+
+	m.PutBlock()
+}
+
+func (m *Matrix) MoveBlock() {
+	m.MoveBlockY(m.BlockDirection)
 	m.terminal.StatusBar(fmt.Sprintf("%d %d", m.blockX, m.blockY))
 }
 
