@@ -47,7 +47,9 @@ func (b *Block) Height() int {
 	return len(b.Shape)
 }
 
-func (b *Block) Transpose() {
+// Rotates a block doing a matrix
+// transposition
+func (b *Block) Rotate() {
 
 	// rows turn columns
 	cols := len(b.Shape)
@@ -185,17 +187,4 @@ func (b Block) Clone() Block {
 	}
 
 	return clone
-}
-
-// Debug the Block Rendering and Transposition
-func CheckBlocksRendering(availableBlocks []Block) {
-	for _, b := range availableBlocks {
-		b.Print()
-		fmt.Printf("\n\n")
-		for f := 0; f < 3; f++ {
-			b.Transpose()
-			b.Print()
-			fmt.Printf("\n\n")
-		}
-	}
 }

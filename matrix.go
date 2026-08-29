@@ -59,7 +59,7 @@ func (m *Matrix) RotateBlock() {
 	oldHeight := m.block.Height()
 
 	m.RemoveBlock()
-	m.block.Transpose()
+	m.block.Rotate()
 
 	newWidth := m.block.Width()
 	newHeight := m.block.Height()
@@ -160,11 +160,11 @@ func (m *Matrix) WillCollide(x, y int) bool {
 // - NextX/Y will return the next coordinate
 func (m *Matrix) NextX(direction int) int {
 	nextX := m.blockX
-	if direction == BLOCK_DIRECTION_LEFT && m.blockX > 0 {
+	if direction == DIR_LEFT && m.blockX > 0 {
 		nextX--
 	}
 
-	if direction == BLOCK_DIRECTION_RIGHT && m.blockX < m.width-m.block.Width() {
+	if direction == DIR_RIGHT && m.blockX < m.width-m.block.Width() {
 		nextX++
 	}
 
@@ -179,11 +179,11 @@ func (m *Matrix) NextX(direction int) int {
 func (m *Matrix) NextY(direction int) int {
 	nextY := m.blockY
 
-	if direction == BLOCK_DIRECTION_UP && m.blockY > 0 {
+	if direction == DIR_UP && m.blockY > 0 {
 		nextY--
 	}
 
-	if direction == BLOCK_DIRECTION_DOWN && m.blockY < m.height-m.block.Height() {
+	if direction == DIR_DOWN && m.blockY < m.height-m.block.Height() {
 		nextY++
 	}
 

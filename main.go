@@ -4,30 +4,37 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"slices"
 	"time"
 
 	"golang.org/x/term"
 )
 
 const (
-	BOARD_WIDTH           = 9
-	BOARD_HEIGHT          = 20
-	BL_NIL                = " "
-	BL_FIL                = "*"
-	KEY_UP                = "\x1b[A"
-	KEY_DOWN              = "\x1b[B"
-	KEY_RIGHT             = "\x1b[C"
-	KEY_LEFT              = "\x1b[D"
-	KEY_CTRL_C            = "\x03"
-	KEY_ESC               = "\x1b"
-	BLOCK_DIRECTION_UP    = -1
-	BLOCK_DIRECTION_DOWN  = 1
-	BLOCK_DIRECTION_LEFT  = -1
-	BLOCK_DIRECTION_RIGHT = 1
-	KEY_Q                 = "q"
+	// board dimensions
+	BOARD_WIDTH  = 9
+	BOARD_HEIGHT = 20
+
+	// block components
+	BL_NIL = " "
+	BL_FIL = "*"
+
+	// used key codes
+	KEY_UP     = "\x1b[A"
+	KEY_DOWN   = "\x1b[B"
+	KEY_RIGHT  = "\x1b[C"
+	KEY_LEFT   = "\x1b[D"
+	KEY_CTRL_C = "\x03"
+	KEY_ESC    = "\x1b"
+
+	// directions
+	DIR_UP    = -1
+	DIR_DOWN  = 1
+	DIR_LEFT  = -1
+	DIR_RIGHT = 1
+	KEY_Q     = "q"
 )
 
+// Read keys from stdin
 func readKeys(keys chan<- string) {
 	buffer := make([]byte, 3)
 
@@ -44,9 +51,6 @@ func readKeys(keys chan<- string) {
 
 func main() {
 
-	optionRender := len(os.Args) > 1 && slices.Contains(os.Args[1:], "-r")
-	optionRotateOnly := len(os.Args) > 1 && slices.Contains(os.Args[1:], "-o")
-
 	err, terminal := NewTerminal()
 	if err != nil {
 		log.Fatalf("error initializing terminal: %v", err)
@@ -55,13 +59,7 @@ func main() {
 
 	board := NewMatrix(BOARD_WIDTH, BOARD_HEIGHT, &terminal)
 
-	if optionRender {
-		CheckBlocksRendering(InitBlocks())
-		board.Render()
-		terminal.Info()
-		return
-	}
-
+	// the cursor is noisy, so turn off
 	terminal.SetCursorOff()
 	defer terminal.SetCursorOn()
 
@@ -75,9 +73,8 @@ func main() {
 	board.Render()
 	board.PickRandomBlock()
 	board.PlaceBlockAtBottom()
-	board.BlockDirection = BLOCK_DIRECTION_UP
+	board.BlockDirection = DIR_UP
 
-	// read keys interferes in the getPos() function...
 	keys := make(chan string, 1)
 	go readKeys(keys)
 
@@ -96,9 +93,9 @@ func main() {
 
 			switch key {
 			case KEY_LEFT:
-				board.MoveBlockX(BLOCK_DIRECTION_LEFT)
+				board.MoveBlockX(DIR_LEFT)
 			case KEY_RIGHT:
-				board.MoveBlockX(BLOCK_DIRECTION_RIGHT)
+				board.MoveBlockX(DIR_RIGHT)
 			case KEY_UP:
 				for !board.BlockHitTop() && !board.Collided {
 					board.MoveBlock()
@@ -119,33 +116,29 @@ func main() {
 			}
 
 		case <-ticker.C:
-			// This continues running even when no key is pressed.
+			// update the timer
 			terminal.Timer(time.Since(startTime).Truncate(time.Second).String())
-			if optionRotateOnly {
-				board.PlaceBlockAtCenter()
-				board.RemoveBlockAtCenter()
-				board.RotateBlock()
-				board.PlaceBlockAtCenter()
-				continue
+
+			if !board.HasBlock() {
+				break
 			}
 
-			if board.HasBlock() {
-				board.MoveBlock()
-				if board.BlockHitTop() || board.Collided {
-					if board.MovesCount == 1 && board.Collided {
-						fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
-						fmt.Printf("\r\n!!!              !!")
-						fmt.Printf("\r\n!!!  GAME OVER   !!")
-						fmt.Printf("\r\n!!!              !!")
-						fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
-						fmt.Printf("\r\n")
-						return
-					}
-					board.CheckForFullRows()
-					board.PickRandomBlock()
-					board.PlaceBlockAtBottom()
+			board.MoveBlock()
+			if board.BlockHitTop() || board.Collided {
+				if board.MovesCount == 1 && board.Collided {
+					fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
+					fmt.Printf("\r\n!!!              !!")
+					fmt.Printf("\r\n!!!  GAME OVER   !!")
+					fmt.Printf("\r\n!!!              !!")
+					fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
+					fmt.Printf("\r\n")
+					return
 				}
+				board.CheckForFullRows()
+				board.PickRandomBlock()
+				board.PlaceBlockAtBottom()
 			}
+
 		}
 	}
 
