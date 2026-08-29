@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	BOARD_WIDTH           = 20
-	BOARD_HEIGHT          = 40
+	BOARD_WIDTH           = 10
+	BOARD_HEIGHT          = 20
 	BLOCK_EMPTY           = " "
 	BLOCK_FILLED          = "*"
 	KEY_UP                = "\x1b[A"

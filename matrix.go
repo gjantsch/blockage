@@ -124,29 +124,70 @@ func (m *Matrix) PutBlock() {
 	}
 }
 
-func (m *Matrix) MoveBlockX(direction int) {
-	m.RemoveBlock()
+// --- COLISION DETECTION
+func (m *Matrix) WillCollide(x, y int) bool {
+	for i, row := range m.block.Shape {
+		for j, c := range row {
+			if c == BLOCK_FILLED {
+				newX := x + j
+				newY := y + i
+				if newX < 0 || newX >= m.width || newY < 0 || newY >= m.height {
+					return true
+				}
+				if m.content[newY][newX] == BLOCK_FILLED {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+// --- MOVE BLOCK FUNCTIONS
+func (m *Matrix) NextX(direction int) int {
+	nextX := m.blockX
 	if direction == BLOCK_DIRECTION_LEFT && m.blockX > 0 {
-		m.blockX--
+		nextX--
 	}
 
 	if direction == BLOCK_DIRECTION_RIGHT && m.blockX < m.width-m.block.Width() {
-		m.blockX++
+		nextX++
 	}
 
+	if m.WillCollide(nextX, m.blockY) {
+		return m.blockX
+	}
+
+	return nextX
+}
+
+func (m *Matrix) NextY(direction int) int {
+	nextY := m.blockY
+
+	if direction == BLOCK_DIRECTION_UP && m.blockY > 0 {
+		nextY--
+	}
+
+	if direction == BLOCK_DIRECTION_DOWN && m.blockY < m.height-m.block.Height() {
+		nextY++
+	}
+
+	if m.WillCollide(m.blockX, nextY) {
+		return m.blockY
+	}
+
+	return nextY
+}
+
+func (m *Matrix) MoveBlockX(direction int) {
+	m.RemoveBlock()
+	m.blockX = m.NextX(direction)
 	m.PutBlock()
 }
 
 func (m *Matrix) MoveBlockY(direction int) {
 	m.RemoveBlock()
-	if direction == BLOCK_DIRECTION_UP && m.blockY > 0 {
-		m.blockY--
-	}
-
-	if direction == BLOCK_DIRECTION_DOWN && m.blockY < m.height-m.block.Height() {
-		m.blockY++
-	}
-
+	m.blockY = m.NextY(direction)
 	m.PutBlock()
 }
 
@@ -154,6 +195,15 @@ func (m *Matrix) MoveBlock() {
 	m.MoveBlockY(m.BlockDirection)
 	m.terminal.StatusBar(fmt.Sprintf("%d %d", m.blockX, m.blockY))
 }
+
+// --- IS LEGAL MOVE or DO WE HIT ANOTHER BLOCK?
+//
+// In a simple and generic way we can move it to the next place and check that
+// no BLOCK_FILLED on the shape hits a BLOCK_FILLED on the matrix on the next
+// position.
+// Key decision:
+// - MoveBlockX/Y will do the actual move.
+// - NextX/Y will return the next coordinate
 
 func (m *Matrix) PlaceBlockAtBottom() {
 	bottomX := ((m.width - m.block.Width()) / 2)
