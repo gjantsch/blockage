@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"slices"
@@ -12,6 +13,8 @@ import (
 const (
 	BOARD_WIDTH  = 20
 	BOARD_HEIGHT = 40
+	BLOCK_EMPTY  = "."
+	BLOCK_FILLED = "*"
 )
 
 func readKeys(keys chan<- byte) {
@@ -59,7 +62,9 @@ func main() {
 	defer term.Restore(int(os.Stdin.Fd()), previousState)
 
 	board.Render()
-	block := PickRandomBlock()
+	board.PickRandomBlock()
+	board.PlaceBlockAtBottom()
+	board.BlockDirection = BLOCK_DIRECTION_UP
 
 	// read keys interferes in the getPos() function...
 	keys := make(chan byte, 1)
@@ -67,7 +72,7 @@ func main() {
 
 	startTime := time.Now()
 
-	ticker := time.NewTicker(500 * time.Millisecond)
+	ticker := time.NewTicker(250 * time.Millisecond)
 	defer ticker.Stop()
 
 	for {
@@ -79,39 +84,35 @@ func main() {
 			}
 
 			switch key {
-			case 'a':
-				terminal.PrintAt(1, 3, "left ")
-			case 'd':
-				terminal.PrintAt(1, 3, "right")
+			case 'r':
+				board.RotateBlock()
+			case 's':
+				board.ChangeBlockShape()
 			case 'q':
 			case 'Q':
-				log.Println("exit key pressed, exiting")
+				fmt.Printf("\r\nexit key pressed, exiting\r\n")
 				return
 			case '\x03': // Ctrl+C
-				log.Println("ctrl+c pressed, exiting")
+				fmt.Printf(" \r\nctrl+c pressed, exiting\r\n")
 				return
 			case '\x1b': // ESC
-				log.Println("escape key pressed, exiting")
+				fmt.Printf("\r\nescape key pressed, exiting\r\n")
 				return
 			}
 
 		case <-ticker.C:
 			// This continues running even when no key is pressed.
 			terminal.Timer(time.Since(startTime).Truncate(time.Second).String())
-			terminal.StatusBar("updated updated updated updated updated updated updated updated updated updated updated updated updated")
 			if optionRotateOnly {
-				board.PlaceBlockAtCenter(block)
-				board.RemoveBlockAtCenter(block)
-				block.Transpose()
-				board.PlaceBlockAtCenter(block)
+				board.PlaceBlockAtCenter()
+				board.RemoveBlockAtCenter()
+				board.RotateBlock()
+				board.PlaceBlockAtCenter()
 				continue
 			}
 
 			if board.HasBlock() {
 				board.MoveBlock()
-			} else {
-				board.PlaceBlockAtBottom(block)
-				board.BlockDirection = BLOCK_DIRECTION_UP
 			}
 		}
 	}

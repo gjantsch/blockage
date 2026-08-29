@@ -120,12 +120,12 @@ func (t *Terminal) SetCursorOn() {
 func (t *Terminal) DrawBoard(width, height int) {
 
 	// this is the timer row
-	fmt.Printf("[%s]\r\n", strings.Repeat("  ", width))
+	fmt.Printf("[%s]\r\n", strings.Repeat(BLOCK_EMPTY+BLOCK_EMPTY, width))
 
 	// first frame row +---...---+
 	fmt.Printf("+%s+\r\n", strings.Repeat("--", width))
 	for i := 1; i <= height; i++ {
-		fmt.Printf("|%s|\r\n", strings.Repeat("  ", width))
+		fmt.Printf("|%s|\r\n", strings.Repeat(BLOCK_EMPTY+BLOCK_EMPTY, width))
 	}
 	// last frame row +---...---+
 	fmt.Printf("+%s+\r\n", strings.Repeat("--", width))
@@ -148,7 +148,7 @@ func (t *Terminal) DrawBoard(width, height int) {
 
 func (t *Terminal) Timer(timeString string) {
 	chars := []string{"|", "/", "-", "\\"}
-	content := fmt.Sprintf("[%d] %s %s", t.boardStatusRow, chars[t.clockPtr], timeString)
+	content := fmt.Sprintf("%s %s", chars[t.clockPtr], timeString)
 	t.PrintAt(t.boardTimerRow, 2, content)
 	t.clockPtr = (t.clockPtr + 1) % len(chars)
 }
@@ -163,7 +163,7 @@ func (t *Terminal) StatusBar(c string) {
 // is the right place to put the string
 func (t *Terminal) PrintAtBoard(x, y int, c string) {
 	// adjust row and col to board coordinates
-	boardRow := t.boardStartRow + y + 1
+	boardRow := t.boardStartRow + y
 	boardCol := t.boardStartCol + (x * 2) + 1
 
 	fmt.Fprintf(os.Stdout, "\x1b[%d;%dH", boardRow, boardCol)

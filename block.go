@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 )
 
 const (
@@ -121,9 +120,16 @@ func InitBlocks() []Block {
 	return b
 }
 
-func PickRandomBlock() Block {
-	blocks := InitBlocks()
-	return blocks[rand.Intn(len(blocks))]
+func (b Block) Clone() Block {
+	clone := b
+	clone.Shape = make([][]string, len(b.Shape))
+
+	for i := range b.Shape {
+		clone.Shape[i] = make([]string, len(b.Shape[i]))
+		copy(clone.Shape[i], b.Shape[i])
+	}
+
+	return clone
 }
 
 // Debug the Block Rendering and Transposition
