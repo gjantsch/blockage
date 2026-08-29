@@ -30,42 +30,7 @@ func NewMatrix(width int, height int, term *Terminal) Matrix {
 			m.content[i][j] = BLOCK_EMPTY
 		}
 	}
-
-	m.blocks = []Block{
-		Block{
-			x: 0,
-			y: 0,
-			Shape: [][]string{
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_EMPTY, BLOCK_EMPTY},
-				[]string{BLOCK_EMPTY, BLOCK_EMPTY, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
-			},
-		},
-		Block{
-			x: 0,
-			y: 0,
-			Shape: [][]string{
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
-			},
-		},
-		Block{
-			x: 0,
-			y: 0,
-			Shape: [][]string{
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
-			},
-		},
-		Block{
-			x: 0,
-			y: 0,
-			Shape: [][]string{
-				[]string{BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED, BLOCK_FILLED},
-				[]string{BLOCK_EMPTY, BLOCK_EMPTY, BLOCK_FILLED, BLOCK_EMPTY, BLOCK_EMPTY},
-				[]string{BLOCK_EMPTY, BLOCK_EMPTY, BLOCK_FILLED, BLOCK_EMPTY, BLOCK_EMPTY},
-			},
-		},
-	}
+	m.blocks = InitBlocks()
 
 	return m
 }
@@ -116,6 +81,11 @@ func (m *Matrix) ChangeBlockShape() {
 func (m *Matrix) HasBlock() bool {
 	return !m.block.IsEmpty()
 }
+
+func (m *Matrix) BlockHitTop() bool {
+	return m.blockY == 0
+}
+
 func (m *Matrix) Render() {
 	m.terminal.DrawBoard(m.width, m.height)
 }

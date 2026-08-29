@@ -113,6 +113,10 @@ func main() {
 
 			if board.HasBlock() {
 				board.MoveBlock()
+				if board.BlockHitTop() {
+					board.PickRandomBlock()
+					board.PlaceBlockAtBottom()
+				}
 			}
 		}
 	}
