@@ -83,9 +83,24 @@ func InitBlocks() []Block {
 			x: 0,
 			y: 0,
 			Shape: [][]string{
+				[]string{BL_FIL},
+			},
+		},
+		Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_NIL},
 				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_FIL, BL_FIL},
+			},
+		},
+		Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
+				[]string{BL_FIL, BL_FIL},
+				[]string{BL_FIL, BL_FIL},
+				[]string{BL_FIL, BL_FIL},
 			},
 		},
 		Block{
@@ -93,22 +108,12 @@ func InitBlocks() []Block {
 			y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_FIL, BL_FIL, BL_FIL},
 			},
 		},
 		Block{
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
-			},
-		},
-		Block{
-			x: 0,
-			y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
 				[]string{BL_FIL, BL_FIL, BL_FIL},
 				[]string{BL_NIL, BL_FIL, BL_NIL},
 			},
@@ -117,7 +122,6 @@ func InitBlocks() []Block {
 			x: 0,
 			y: 0,
 			Shape: [][]string{
-				[]string{BL_NIL, BL_FIL, BL_NIL},
 				[]string{BL_FIL, BL_FIL, BL_FIL},
 				[]string{BL_NIL, BL_FIL, BL_NIL},
 			},
@@ -136,7 +140,6 @@ func InitBlocks() []Block {
 			y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_NIL, BL_FIL},
 				[]string{BL_NIL, BL_NIL, BL_FIL},
 			},
 		},
@@ -170,6 +173,13 @@ func InitBlocks() []Block {
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_FIL},
 				[]string{BL_FIL, BL_NIL, BL_FIL},
+			},
+		}, Block{
+			x: 0,
+			y: 0,
+			Shape: [][]string{
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_NIL, BL_NIL, BL_FIL},
 			},
 		},
 	}

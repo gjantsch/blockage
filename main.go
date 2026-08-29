@@ -11,8 +11,8 @@ import (
 
 const (
 	// board dimensions
-	BOARD_WIDTH  = 9
-	BOARD_HEIGHT = 20
+	BOARD_WIDTH  = 8
+	BOARD_HEIGHT = 32
 
 	// block components
 	BL_NIL = " "
@@ -100,9 +100,11 @@ func main() {
 				for !board.BlockHitTop() && !board.Collided {
 					board.MoveBlock()
 				}
-			case "r":
+			case "r", "R":
 				board.RotateBlock()
-			case "s":
+			case "s", "S":
+				board.ChangeBlockShape()
+			case "e", "E":
 				board.ChangeBlockShape()
 			case "q", "Q":
 				fmt.Printf("\r\nexit key pressed, exiting\r\n")

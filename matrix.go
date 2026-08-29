@@ -109,6 +109,18 @@ func (m *Matrix) ChangeBlockShape() {
 	m.PutBlock()
 }
 
+func (m *Matrix) BlockShapeToDot() {
+	m.RemoveBlock()
+
+	b := m.blocks[0]
+
+	b.x = m.blockX
+	b.y = m.blockY
+
+	m.block = b.Clone()
+	m.PutBlock()
+}
+
 func (m *Matrix) HasBlock() bool {
 	return !m.block.IsEmpty()
 }
