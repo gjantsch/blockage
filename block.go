@@ -65,8 +65,8 @@ func (b *Block) Rotate() {
 	// transpose
 	for i, row := range b.Shape {
 		for j, s := range row {
-			// for proper visual effect
-			// this is backwards
+			// for proper visual effect the
+			// transposition is backwards
 			t[len(row)-j-1][i] = s
 		}
 	}

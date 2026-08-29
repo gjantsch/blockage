@@ -58,6 +58,11 @@ func (m *Matrix) RotateBlock() {
 	oldWidth := m.block.Width()
 	oldHeight := m.block.Height()
 
+	// TODO: check if the rotation is possible
+	if !m.BlockCanRotate() {
+		return
+	}
+
 	m.RemoveBlock()
 	m.block.Rotate()
 
@@ -69,6 +74,27 @@ func (m *Matrix) RotateBlock() {
 	m.blockY += (oldHeight - newHeight) / 2
 
 	m.PutBlock()
+}
+
+// when block rotates the matrix will be transposed
+// and when we put the block on the board the position
+// is based on its height minus the board height
+func (m *Matrix) BlockCanRotate() bool {
+
+	newWidth := m.block.Height()
+	newHeight := m.block.Width()
+
+	// so, if we rotate, X axis must not flood
+	if m.blockX < 0 || m.blockX+newWidth > m.width {
+		return false
+	}
+
+	// and Y axis must not flood as well
+	if m.blockY < 0 || m.blockY+newHeight > m.height {
+		return false
+	}
+
+	return true
 }
 
 func (m *Matrix) ChangeBlockShape() {
