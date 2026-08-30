@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 // THE BLOCK
 // hold a single Block data
 // with position and form
@@ -24,16 +20,6 @@ func EmptyBlock() Block {
 
 func (b *Block) IsEmpty() bool {
 	return len(b.Shape) == 0
-}
-
-func (b *Block) Print() {
-
-	for _, line := range b.Shape {
-		for _, c := range line {
-			fmt.Printf("%s ", c)
-		}
-		fmt.Println()
-	}
 }
 
 func (b *Block) Width() int {
