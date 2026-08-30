@@ -99,13 +99,13 @@ func (m *Matrix) BlockCanRotate() bool {
 
 func (m *Matrix) ChangeBlockShape() {
 	m.RemoveBlock()
+
 	m.currentBlockPtr = (m.currentBlockPtr + 1) % len(m.blocks)
 	b := m.blocks[m.currentBlockPtr]
-
 	b.x = m.blockX
 	b.y = m.blockY
-
 	m.block = b.Clone()
+
 	m.PutBlock()
 }
 
@@ -113,11 +113,10 @@ func (m *Matrix) BlockShapeToDot() {
 	m.RemoveBlock()
 
 	b := m.blocks[0]
-
 	b.x = m.blockX
 	b.y = m.blockY
-
 	m.block = b.Clone()
+
 	m.PutBlock()
 }
 
@@ -284,6 +283,9 @@ func (m *Matrix) PutBlockAt(x, y int) {
 
 // update content matrix and terminal
 func (m *Matrix) UpdateContent(x, y int, c string) {
+	if x < 0 || x >= m.width || y < 0 || y >= m.height {
+		return
+	}
 	m.content[y][x] = c
 	m.terminal.PrintAtBoard(x, y, c)
 }

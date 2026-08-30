@@ -105,7 +105,7 @@ func main() {
 			case "s", "S":
 				board.ChangeBlockShape()
 			case "e", "E":
-				board.ChangeBlockShape()
+				board.BlockShapeToDot()
 			case "q", "Q":
 				fmt.Printf("\r\nexit key pressed, exiting\r\n")
 				return
