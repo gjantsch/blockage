@@ -15,7 +15,7 @@ const (
 	// ANSI Device Status Report sequence
 	DSR_QUERY_POSITION = "\x1b[6n"
 	ANSI_CLEAR_SCREEN  = "\x1b[2J\x1b[H"
-	ANSI_GOTO_XY       = "\x1b[%d;%dH"
+	ANSI_PRINT_AT_XY   = "\x1b[%d;%dH%s"
 	ANSI_CURSOR_OFF    = "\x1b[?25l"
 	ANSI_CURSOR_ON     = "\x1b[?25h"
 )
@@ -73,7 +73,7 @@ func (t *Terminal) NewLine() {
 
 func (t *Terminal) GetPos() (row, col int, err error) {
 	// request cursor position
-	_, err = os.Stdout.Write([]byte(DSR_QUERY_POSITION))
+	_, err = os.Stdout.WriteString(DSR_QUERY_POSITION)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -105,8 +105,7 @@ func (t *Terminal) GetPos() (row, col int, err error) {
 }
 
 func (t *Terminal) PrintAt(row, col int, c string) {
-	fmt.Fprintf(os.Stdout, "\x1b[%d;%dH", row, col)
-	fmt.Print(c)
+	fmt.Fprintf(os.Stdout, ANSI_PRINT_AT_XY, row, col, c)
 }
 
 func (t *Terminal) ClearScreen() {
@@ -154,7 +153,7 @@ func (t *Terminal) computeBoardLayout(width int, height int) error {
 }
 
 func (t *Terminal) Timer(timeString string) {
-	t.PrintAt(t.timerRow, 2, fmt.Sprintf("%s %s", t.clock.Next(), timeString))
+	t.PrintAt(t.timerRow, 2, t.clock.Next()+" "+timeString)
 }
 
 func (t *Terminal) StatusBar(content string) {
@@ -169,8 +168,7 @@ func (t *Terminal) PrintAtBoard(x, y int, c string) {
 	boardRow := t.boardStartRow + y
 	boardCol := t.boardStartCol + (x * 2) + 1
 
-	fmt.Fprintf(os.Stdout, ANSI_GOTO_XY, boardRow, boardCol)
-	fmt.Print(c)
+	fmt.Fprintf(os.Stdout, ANSI_PRINT_AT_XY, boardRow, boardCol, c)
 }
 
 func (t *Terminal) Print(content string) {

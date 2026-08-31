@@ -186,7 +186,7 @@ func (m *Matrix) WillCollide(x, y int) bool {
 			if c {
 				newX := x + j
 				newY := y + i
-				if m.content[newY][newX] == true {
+				if m.content[newY][newX] {
 					return true
 				}
 			}
@@ -242,16 +242,16 @@ func (m *Matrix) NextY(direction YDirection) int {
 }
 
 func (m *Matrix) CheckForFullRows() int {
-	removed := true
-	for removed {
-		removed = false
-		for y := 0; y < m.height; y++ {
-			full := true
+
+	for y := 0; y < m.height; y++ {
+		// if next row is full, check again, until no more full rows
+		full := true
+		for full {
 			for x := 0; x < m.width && full; x++ {
 				full = full && m.content[y][x]
 			}
 			if full {
-				removed = true
+				// remove the row and move all above down
 				for ny := y; ny < m.height-1; ny++ {
 					for nx := 0; nx < m.width; nx++ {
 						uy := ny + 1
@@ -263,6 +263,7 @@ func (m *Matrix) CheckForFullRows() int {
 			}
 		}
 	}
+
 	return m.rowsCompleted
 }
 
