@@ -39,7 +39,7 @@ const (
 type Matrix struct {
 	width           int
 	height          int
-	content         [][]string
+	content         [][]bool
 	terminal        Renderer
 	block           Block
 	blockX          int
@@ -53,11 +53,11 @@ type Matrix struct {
 
 func NewMatrix(width int, height int, term Renderer) Matrix {
 	m := Matrix{width: width, height: height, terminal: term}
-	m.content = make([][]string, height)
+	m.content = make([][]bool, height)
 	for i := range m.content {
-		m.content[i] = make([]string, width)
+		m.content[i] = make([]bool, width)
 		for j := range m.content[i] {
-			m.content[i][j] = BL_NIL
+			m.content[i][j] = false
 		}
 	}
 	m.blocks = InitBlocks()
@@ -162,8 +162,8 @@ func (m *Matrix) Render() error {
 func (m *Matrix) RemoveBlock() {
 	for i, row := range m.block.Shape {
 		for j := range row {
-			if m.block.Shape[i][j] == BL_FIL {
-				m.UpdateContent(m.blockX+j, m.blockY+i, BL_NIL)
+			if m.block.Shape[i][j] {
+				m.UpdateContent(m.blockX+j, m.blockY+i, false)
 			}
 		}
 	}
@@ -172,7 +172,7 @@ func (m *Matrix) RemoveBlock() {
 func (m *Matrix) PutBlock() {
 	for i, row := range m.block.Shape {
 		for j := range row {
-			if m.block.Shape[i][j] == BL_FIL {
+			if m.block.Shape[i][j] {
 				m.UpdateContent(m.blockX+j, m.blockY+i, m.block.Shape[i][j])
 			}
 		}
@@ -183,10 +183,10 @@ func (m *Matrix) PutBlock() {
 func (m *Matrix) WillCollide(x, y int) bool {
 	for i, row := range m.block.Shape {
 		for j, c := range row {
-			if c == BL_FIL {
+			if c {
 				newX := x + j
 				newY := y + i
-				if m.content[newY][newX] == BL_FIL {
+				if m.content[newY][newX] == true {
 					return true
 				}
 			}
@@ -248,7 +248,7 @@ func (m *Matrix) CheckForFullRows() int {
 		for y := 0; y < m.height; y++ {
 			full := true
 			for x := 0; x < m.width && full; x++ {
-				full = full && m.content[y][x] != BL_NIL
+				full = full && m.content[y][x]
 			}
 			if full {
 				removed = true
@@ -256,7 +256,7 @@ func (m *Matrix) CheckForFullRows() int {
 					for nx := 0; nx < m.width; nx++ {
 						uy := ny + 1
 						m.UpdateContent(nx, ny, m.content[uy][nx])
-						m.UpdateContent(nx, uy, BL_NIL)
+						m.UpdateContent(nx, uy, false)
 					}
 				}
 				m.rowsCompleted++
@@ -311,10 +311,14 @@ func (m *Matrix) PutBlockAt(x, y int) {
 }
 
 // update content matrix and terminal
-func (m *Matrix) UpdateContent(x, y int, c string) {
+func (m *Matrix) UpdateContent(x, y int, filled bool) {
+	c := BL_NIL
+	if filled {
+		c = BL_FIL
+	}
 	if x < 0 || x >= m.width || y < 0 || y >= m.height {
 		return
 	}
-	m.content[y][x] = c
+	m.content[y][x] = filled
 	m.terminal.PrintAtBoard(x, y, c)
 }

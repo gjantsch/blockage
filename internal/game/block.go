@@ -7,14 +7,14 @@ type Block struct {
 	X         int
 	Y         int
 	Direction int
-	Shape     [][]string
+	Shape     [][]bool
 }
 
 func EmptyBlock() Block {
 	return Block{
 		X:     0,
 		Y:     0,
-		Shape: [][]string{},
+		Shape: [][]bool{},
 	}
 }
 
@@ -43,9 +43,9 @@ func (b *Block) Rotate() {
 	rows := len(b.Shape[0])
 
 	// initialize new Block
-	t := make([][]string, rows)
+	t := make([][]bool, rows)
 	for i := range t {
-		t[i] = make([]string, cols)
+		t[i] = make([]bool, cols)
 	}
 
 	// transpose
@@ -68,104 +68,104 @@ func InitBlocks() []Block {
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL},
+			Shape: [][]bool{
+				[]bool{true},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_NIL},
-				[]string{BL_FIL, BL_FIL, BL_FIL},
+			Shape: [][]bool{
+				[]bool{true, true, false},
+				[]bool{true, true, true},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL},
-				[]string{BL_FIL, BL_FIL},
-				[]string{BL_FIL, BL_FIL},
+			Shape: [][]bool{
+				[]bool{true, true},
+				[]bool{true, true},
+				[]bool{true, true},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
+			Shape: [][]bool{
+				[]bool{true, true, true},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_FIL, BL_NIL},
+			Shape: [][]bool{
+				[]bool{true, true, true},
+				[]bool{false, true, false},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_FIL, BL_NIL},
+			Shape: [][]bool{
+				[]bool{true, true, true},
+				[]bool{false, true, false},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_NIL, BL_FIL},
+			Shape: [][]bool{
+				[]bool{true, true, true},
+				[]bool{false, true, true},
+				[]bool{false, false, true},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_NIL, BL_FIL},
+			Shape: [][]bool{
+				[]bool{true, true, true},
+				[]bool{false, false, true},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_FIL},
+			Shape: [][]bool{
+				[]bool{true, true},
+				[]bool{false, true},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL},
-				[]string{BL_FIL, BL_FIL},
+			Shape: [][]bool{
+				[]bool{true, true},
+				[]bool{true, true},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL},
-				[]string{BL_FIL},
+			Shape: [][]bool{
+				[]bool{true},
+				[]bool{true},
 			},
 		},
 		Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_FIL, BL_NIL, BL_FIL},
+			Shape: [][]bool{
+				[]bool{true, true, true},
+				[]bool{true, false, true},
 			},
 		}, Block{
 			X: 0,
 			Y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_NIL, BL_FIL},
+			Shape: [][]bool{
+				[]bool{true, true, true},
+				[]bool{false, false, true},
 			},
 		},
 	}
@@ -175,10 +175,10 @@ func InitBlocks() []Block {
 
 func (b Block) Clone() Block {
 	clone := b
-	clone.Shape = make([][]string, len(b.Shape))
+	clone.Shape = make([][]bool, len(b.Shape))
 
 	for i := range b.Shape {
-		clone.Shape[i] = make([]string, len(b.Shape[i]))
+		clone.Shape[i] = make([]bool, len(b.Shape[i]))
 		copy(clone.Shape[i], b.Shape[i])
 	}
 
