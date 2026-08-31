@@ -1,9 +1,4 @@
-package block
-
-const (
-	BL_NIL = " "
-	BL_FIL = "*"
-)
+package game
 
 // THE BLOCK
 // hold a single Block data
