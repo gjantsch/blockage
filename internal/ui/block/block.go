@@ -1,19 +1,24 @@
-package main
+package block
+
+const (
+	BL_NIL = " "
+	BL_FIL = "*"
+)
 
 // THE BLOCK
 // hold a single Block data
 // with position and form
 type Block struct {
-	x         int
-	y         int
+	X         int
+	Y         int
 	Direction int
 	Shape     [][]string
 }
 
 func EmptyBlock() Block {
 	return Block{
-		x:     0,
-		y:     0,
+		X:     0,
+		Y:     0,
 		Shape: [][]string{},
 	}
 }
@@ -66,23 +71,23 @@ func InitBlocks() []Block {
 
 	b := []Block{
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL},
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_NIL},
 				[]string{BL_FIL, BL_FIL, BL_FIL},
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL},
 				[]string{BL_FIL, BL_FIL},
@@ -90,31 +95,31 @@ func InitBlocks() []Block {
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
-			Shape: [][]string{
-				[]string{BL_FIL, BL_FIL, BL_FIL},
-			},
-		},
-		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_FIL},
-				[]string{BL_NIL, BL_FIL, BL_NIL},
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_FIL},
 				[]string{BL_NIL, BL_FIL, BL_NIL},
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
+			Shape: [][]string{
+				[]string{BL_FIL, BL_FIL, BL_FIL},
+				[]string{BL_NIL, BL_FIL, BL_NIL},
+			},
+		},
+		Block{
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_FIL},
 				[]string{BL_NIL, BL_FIL, BL_FIL},
@@ -122,47 +127,47 @@ func InitBlocks() []Block {
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_FIL},
 				[]string{BL_NIL, BL_NIL, BL_FIL},
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL},
 				[]string{BL_NIL, BL_FIL},
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL},
 				[]string{BL_FIL, BL_FIL},
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL},
 				[]string{BL_FIL},
 			},
 		},
 		Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_FIL},
 				[]string{BL_FIL, BL_NIL, BL_FIL},
 			},
 		}, Block{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 			Shape: [][]string{
 				[]string{BL_FIL, BL_FIL, BL_FIL},
 				[]string{BL_NIL, BL_NIL, BL_FIL},

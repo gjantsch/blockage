@@ -1,8 +1,17 @@
-package main
+package game
 
 import (
 	"fmt"
 	"math/rand"
+
+	"github.com/gjantsch/fun02/internal/ui/block"
+)
+
+const (
+	DIR_UP    = -1
+	DIR_DOWN  = 1
+	DIR_LEFT  = -1
+	DIR_RIGHT = 1
 )
 
 // THE MATRIX
@@ -12,28 +21,28 @@ type Matrix struct {
 	width           int
 	height          int
 	content         [][]string
-	terminal        *Terminal
-	block           Block
+	terminal        Renderer
+	block           block.Block
 	blockX          int
 	blockY          int
 	BlockDirection  int
-	blocks          []Block
+	blocks          []block.Block
 	currentBlockPtr int
 	Collided        bool
 	MovesCount      int
 	RowsCompleted   int
 }
 
-func NewMatrix(width int, height int, term *Terminal) Matrix {
+func NewMatrix(width int, height int, term Renderer) Matrix {
 	m := Matrix{width: width, height: height, terminal: term}
 	m.content = make([][]string, height)
 	for i := range m.content {
 		m.content[i] = make([]string, width)
 		for j := range m.content[i] {
-			m.content[i][j] = BL_NIL
+			m.content[i][j] = block.BL_NIL
 		}
 	}
-	m.blocks = InitBlocks()
+	m.blocks = block.InitBlocks()
 
 	return m
 }
@@ -102,8 +111,8 @@ func (m *Matrix) ChangeBlockShape() {
 
 	m.currentBlockPtr = (m.currentBlockPtr + 1) % len(m.blocks)
 	b := m.blocks[m.currentBlockPtr]
-	b.x = m.blockX
-	b.y = m.blockY
+	b.X = m.blockX
+	b.Y = m.blockY
 	m.block = b.Clone()
 
 	m.PutBlock()
@@ -113,8 +122,8 @@ func (m *Matrix) BlockShapeToDot() {
 	m.RemoveBlock()
 
 	b := m.blocks[0]
-	b.x = m.blockX
-	b.y = m.blockY
+	b.X = m.blockX
+	b.Y = m.blockY
 	m.block = b.Clone()
 
 	m.PutBlock()
@@ -128,15 +137,15 @@ func (m *Matrix) BlockHitTop() bool {
 	return m.blockY == 0
 }
 
-func (m *Matrix) Render() {
-	m.terminal.DrawBoard(m.width, m.height)
+func (m *Matrix) Render() error {
+	return m.terminal.DrawBoard(m.width, m.height)
 }
 
 func (m *Matrix) RemoveBlock() {
 	for i, row := range m.block.Shape {
 		for j := range row {
-			if m.block.Shape[i][j] == BL_FIL {
-				m.UpdateContent(m.blockX+j, m.blockY+i, BL_NIL)
+			if m.block.Shape[i][j] == block.BL_FIL {
+				m.UpdateContent(m.blockX+j, m.blockY+i, block.BL_NIL)
 			}
 		}
 	}
@@ -145,7 +154,7 @@ func (m *Matrix) RemoveBlock() {
 func (m *Matrix) PutBlock() {
 	for i, row := range m.block.Shape {
 		for j := range row {
-			if m.block.Shape[i][j] == BL_FIL {
+			if m.block.Shape[i][j] == block.BL_FIL {
 				m.UpdateContent(m.blockX+j, m.blockY+i, m.block.Shape[i][j])
 			}
 		}
@@ -156,10 +165,10 @@ func (m *Matrix) PutBlock() {
 func (m *Matrix) WillCollide(x, y int) bool {
 	for i, row := range m.block.Shape {
 		for j, c := range row {
-			if c == BL_FIL {
+			if c == block.BL_FIL {
 				newX := x + j
 				newY := y + i
-				if m.content[newY][newX] == BL_FIL {
+				if m.content[newY][newX] == block.BL_FIL {
 					return true
 				}
 			}
@@ -221,7 +230,7 @@ func (m *Matrix) CheckForFullRows() {
 		for y := 0; y < m.height; y++ {
 			full := true
 			for x := 0; x < m.width && full; x++ {
-				full = full && m.content[y][x] != BL_NIL
+				full = full && m.content[y][x] != block.BL_NIL
 			}
 			if full {
 				removed = true
@@ -229,7 +238,7 @@ func (m *Matrix) CheckForFullRows() {
 					for nx := 0; nx < m.width; nx++ {
 						uy := ny + 1
 						m.UpdateContent(nx, ny, m.content[uy][nx])
-						m.UpdateContent(nx, uy, BL_NIL)
+						m.UpdateContent(nx, uy, block.BL_NIL)
 					}
 				}
 				m.RowsCompleted++

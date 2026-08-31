@@ -1,4 +1,4 @@
-package main
+package render
 
 import (
 	"fmt"
@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gjantsch/fun02/internal/ui/clock"
+	"github.com/gjantsch/fun02/internal/ui/frame"
 	"golang.org/x/term"
 )
 
@@ -30,7 +32,7 @@ type Terminal struct {
 	boardStartCol int
 	timerRow      int
 	statusRow     int
-	clock         Clock
+	clock         *clock.Clock
 }
 
 func NewTerminal() (error, Terminal) {
@@ -56,8 +58,7 @@ func NewTerminal() (error, Terminal) {
 	t.previousState = previousState
 
 	t.SetCursorOff()
-
-	t.clock = *NewClock()
+	t.clock = clock.NewClock()
 
 	return nil, t
 }
@@ -126,7 +127,7 @@ func (t *Terminal) SetCursorOn() {
 // Draw the board on the screen and start the basic calculations
 // to find the initial coordinates to render objects
 func (t *Terminal) DrawBoard(width, height int) error {
-	t.Print(DrawFrame(width, height))
+	t.Print(frame.DrawFrame(width, height))
 	err := t.computeBoardLayout(width, height)
 	if err != nil {
 		return fmt.Errorf("failed to compute board layout: %v", err)

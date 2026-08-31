@@ -1,20 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
+
+	"github.com/gjantsch/fun02/internal/game"
+	"github.com/gjantsch/fun02/internal/render"
 )
 
 const (
 	// board dimensions
 	BOARD_WIDTH  = 8
 	BOARD_HEIGHT = 32
-
-	// block components
-	BL_NIL = " "
-	BL_FIL = "*"
 
 	// used key codes
 	KEY_UP     = "\x1b[A"
@@ -24,12 +22,7 @@ const (
 	KEY_CTRL_C = "\x03"
 	KEY_ESC    = "\x1b"
 
-	// directions
-	DIR_UP    = -1
-	DIR_DOWN  = 1
-	DIR_LEFT  = -1
-	DIR_RIGHT = 1
-	KEY_Q     = "q"
+	KEY_Q = "q"
 )
 
 // Read keys from stdin
@@ -47,7 +40,7 @@ func readKeys(keys chan<- string) {
 	}
 }
 
-func gameOver(terminal Terminal) {
+func gameOver(terminal *render.Terminal) {
 	terminal.Print("\r\n!!!!!!!!!!!!!!!!!!!")
 	terminal.Print("\r\n!!!              !!")
 	terminal.Print("\r\n!!!  GAME OVER   !!")
@@ -58,14 +51,14 @@ func gameOver(terminal Terminal) {
 
 func main() {
 
-	err, terminal := NewTerminal()
+	err, terminal := render.NewTerminal()
 	defer terminal.Close()
 	if err != nil {
 		log.Fatalf("error initializing terminal: %v", err)
 		return
 	}
 
-	board := NewMatrix(BOARD_WIDTH, BOARD_HEIGHT, &terminal)
+	board := game.NewMatrix(BOARD_WIDTH, BOARD_HEIGHT, &terminal)
 	err = board.Render()
 	if err != nil {
 		log.Fatalf("error rendering board: %v", err)
@@ -73,7 +66,7 @@ func main() {
 	}
 	board.PickRandomBlock()
 	board.PlaceBlockAtBottom()
-	board.BlockDirection = DIR_UP
+	board.BlockDirection = game.DIR_UP
 
 	keys := make(chan string, 1)
 	go readKeys(keys)
@@ -93,9 +86,9 @@ func main() {
 
 			switch key {
 			case KEY_LEFT:
-				board.MoveBlockX(DIR_LEFT)
+				board.MoveBlockX(game.DIR_LEFT)
 			case KEY_RIGHT:
-				board.MoveBlockX(DIR_RIGHT)
+				board.MoveBlockX(game.DIR_RIGHT)
 			case KEY_UP:
 				for !board.BlockHitTop() && !board.Collided {
 					board.MoveBlock()
@@ -107,13 +100,13 @@ func main() {
 			case "e", "E":
 				board.BlockShapeToDot()
 			case "q", "Q":
-				fmt.Printf("\r\nexit key pressed, exiting\r\n")
+				terminal.Print("\r\nexit key pressed, exiting\r\n")
 				return
 			case KEY_CTRL_C:
-				fmt.Printf(" \r\nctrl+c pressed, exiting\r\n")
+				terminal.Print(" \r\nctrl+c pressed, exiting\r\n")
 				return
 			case KEY_ESC:
-				fmt.Printf("\r\nescape key pressed, exiting\r\n")
+				terminal.Print("\r\nescape key pressed, exiting\r\n")
 				return
 			}
 
@@ -128,7 +121,7 @@ func main() {
 			board.MoveBlock()
 			if board.BlockHitTop() || board.Collided {
 				if board.MovesCount == 1 && board.Collided {
-					gameOver(terminal)
+					gameOver(&terminal)
 					return
 				}
 				board.CheckForFullRows()
