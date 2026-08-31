@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 	"time"
-
-	"golang.org/x/term"
 )
 
 const (
@@ -49,28 +47,30 @@ func readKeys(keys chan<- string) {
 	}
 }
 
+func gameOver() {
+	fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
+	fmt.Printf("\r\n!!!              !!")
+	fmt.Printf("\r\n!!!  GAME OVER   !!")
+	fmt.Printf("\r\n!!!              !!")
+	fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
+	fmt.Printf("\r\n")
+}
+
 func main() {
 
 	err, terminal := NewTerminal()
+	defer terminal.Close()
 	if err != nil {
 		log.Fatalf("error initializing terminal: %v", err)
 		return
 	}
 
 	board := NewMatrix(BOARD_WIDTH, BOARD_HEIGHT, &terminal)
-
-	// the cursor is noisy, so turn off
-	terminal.SetCursorOff()
-	defer terminal.SetCursorOn()
-
-	// we must go raw mode
-	previousState, err := term.MakeRaw(int(os.Stdin.Fd()))
+	err = board.Render()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error rendering board: %v", err)
+		return
 	}
-	defer term.Restore(int(os.Stdin.Fd()), previousState)
-
-	board.Render()
 	board.PickRandomBlock()
 	board.PlaceBlockAtBottom()
 	board.BlockDirection = DIR_UP
@@ -128,12 +128,7 @@ func main() {
 			board.MoveBlock()
 			if board.BlockHitTop() || board.Collided {
 				if board.MovesCount == 1 && board.Collided {
-					fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
-					fmt.Printf("\r\n!!!              !!")
-					fmt.Printf("\r\n!!!  GAME OVER   !!")
-					fmt.Printf("\r\n!!!              !!")
-					fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
-					fmt.Printf("\r\n")
+					gameOver()
 					return
 				}
 				board.CheckForFullRows()

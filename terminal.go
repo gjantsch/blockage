@@ -12,24 +12,26 @@ import (
 const (
 	// ANSI Device Status Report sequence
 	DSR_QUERY_POSITION = "\x1b[6n"
-	DSR_CLEAR_SCREEN   = "\x1b[2J\x1b[H"
-	DSR_GO_XY          = "\x1b[%d;%dH"
-	DSR_OFF_CURSOR     = "\x1b[?25l"
-	DSR_ON_CURSOR      = "\x1b[?25h"
+	ANSI_CLEAR_SCREEN  = "\x1b[2J\x1b[H"
+	ANSI_GOTO_XY       = "\x1b[%d;%dH"
+	ANSI_CURSOR_OFF    = "\x1b[?25l"
+	ANSI_CURSOR_ON     = "\x1b[?25h"
 )
 
 // THE TERMINAL
 type Terminal struct {
-	fd             int
-	width          int
-	height         int
-	boardWidth     int
-	boardHeight    int
-	boardTimerRow  int
-	boardStatusRow int
-	boardStartRow  int
-	boardStartCol  int
-	clockPtr       int
+	previousState *term.State
+	fd            int
+	width         int
+	height        int
+	boardWidth    int
+	boardHeight   int
+	boardStartRow int
+	boardStartCol int
+	timerRow      int
+	statusRow     int
+	clock         Clock
+	frame         Frame
 }
 
 func NewTerminal() (error, Terminal) {
@@ -47,7 +49,24 @@ func NewTerminal() (error, Terminal) {
 	t.width = w
 	t.height = h
 
+	// we must go raw mode
+	previousState, err := term.MakeRaw(int(os.Stdin.Fd()))
+	if err != nil {
+		return fmt.Errorf("failed to set terminal to raw mode: %v", err), Terminal{}
+	}
+	t.previousState = previousState
+
+	t.SetCursorOff()
+
+	t.clock = *NewClock()
+	t.frame = NewFrame(t.width, t.height)
+
 	return nil, t
+}
+
+func (t *Terminal) Close() {
+	t.SetCursorOn()
+	term.Restore(t.fd, t.previousState)
 }
 
 func (t *Terminal) NewLine() {
@@ -87,65 +106,61 @@ func (t *Terminal) GetPos() (row, col int, err error) {
 	return row, col, nil
 }
 
-func (t *Terminal) ClearScreen() {
-	fmt.Printf(DSR_CLEAR_SCREEN)
-}
-
 func (t *Terminal) PrintAt(row, col int, c string) {
 	fmt.Fprintf(os.Stdout, "\x1b[%d;%dH", row, col)
 	fmt.Print(c)
 }
 
+func (t *Terminal) ClearScreen() {
+	fmt.Printf(ANSI_CLEAR_SCREEN)
+}
+
 // Turn off the cursor
 func (t *Terminal) SetCursorOff() {
-	fmt.Print(DSR_OFF_CURSOR)
+	fmt.Print(ANSI_CURSOR_OFF)
 }
 
 // Tur on the cursor
 func (t *Terminal) SetCursorOn() {
-	fmt.Print(DSR_ON_CURSOR)
+	fmt.Print(ANSI_CURSOR_ON)
 }
 
 // Draw the board on the screen and start the basic calculations
 // to find the initial coordinates to render objects
-func (t *Terminal) DrawBoard(width, height int) {
-
-	// this is the timer row
-	fmt.Printf("[%s]\r\n", strings.Repeat(BL_NIL+BL_NIL, width))
-
-	// first frame row +---...---+
-	fmt.Printf("+%s+\r\n", strings.Repeat("--", width))
-	for i := 1; i <= height; i++ {
-		fmt.Printf("|%s|\r\n", strings.Repeat(BL_NIL+BL_NIL, width))
+func (t *Terminal) DrawBoard(width, height int) error {
+	t.frame.Draw()
+	err := t.computeBoardLayout(width, height)
+	if err != nil {
+		return fmt.Errorf("failed to compute board layout: %v", err)
 	}
-	// last frame row +---...---+
-	fmt.Printf("+%s+\r\n", strings.Repeat("--", width))
-	// the status bar
-	fmt.Printf("...")
+	t.Timer("")
+	t.StatusBar("")
+	return nil
+}
 
+func (t *Terminal) computeBoardLayout(width int, height int) error {
 	// get the position of the status bar row
-	row, _, _ := t.GetPos()
+	row, _, err := t.GetPos()
+	if err != nil {
+		return fmt.Errorf("failed to get terminal position: %v", err)
+	}
 
-	t.boardStatusRow = row
-	t.boardStartRow = t.boardStatusRow - height - 1
-	t.boardTimerRow = t.boardStartRow - 2
+	t.statusRow = row
+	t.boardStartRow = t.statusRow - height - 1
+	t.timerRow = t.boardStartRow - 2
 	t.boardStartCol = 2
 	t.boardHeight = height
 	t.boardWidth = width
 
-	t.Timer("")
-	t.StatusBar("")
+	return nil
 }
 
 func (t *Terminal) Timer(timeString string) {
-	chars := []string{"|", "/", "-", "\\"}
-	content := fmt.Sprintf("%s %s", chars[t.clockPtr], timeString)
-	t.PrintAt(t.boardTimerRow, 2, content)
-	t.clockPtr = (t.clockPtr + 1) % len(chars)
+	t.PrintAt(t.timerRow, 2, fmt.Sprintf("%s %s", t.clock.Next(), timeString))
 }
 
 func (t *Terminal) StatusBar(content string) {
-	t.PrintAt(t.boardStatusRow, 0, content)
+	t.PrintAt(t.statusRow, 0, content)
 }
 
 // PrintAtBoard receives x and y coordinates RELATIVE TO THE BOARD
@@ -156,6 +171,6 @@ func (t *Terminal) PrintAtBoard(x, y int, c string) {
 	boardRow := t.boardStartRow + y
 	boardCol := t.boardStartCol + (x * 2) + 1
 
-	fmt.Fprintf(os.Stdout, DSR_GO_XY, boardRow, boardCol)
+	fmt.Fprintf(os.Stdout, ANSI_GOTO_XY, boardRow, boardCol)
 	fmt.Print(c)
 }

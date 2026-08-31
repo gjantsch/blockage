@@ -132,13 +132,6 @@ func (m *Matrix) Render() {
 	m.terminal.DrawBoard(m.width, m.height)
 }
 
-func (m *Matrix) GetBlockCenter() (x, y int) {
-	// calculate the center position
-	centerX := (m.width - m.block.Width()) / 2
-	centerY := (m.height - m.block.Height()) / 2
-	return centerX, centerY
-}
-
 func (m *Matrix) RemoveBlock() {
 	for i, row := range m.block.Shape {
 		for j := range row {
