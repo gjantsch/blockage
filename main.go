@@ -11,16 +11,16 @@ import (
 
 const (
 	// board dimensions
-	BOARD_WIDTH  = 8
-	BOARD_HEIGHT = 32
+	BoardWidth  = 8
+	BoardHeight = 32
 
 	// used key codes
-	KEY_UP     = "\x1b[A"
-	KEY_DOWN   = "\x1b[B"
-	KEY_RIGHT  = "\x1b[C"
-	KEY_LEFT   = "\x1b[D"
-	KEY_CTRL_C = "\x03"
-	KEY_ESC    = "\x1b"
+	KeyUp    = "\x1b[A"
+	KeyDown  = "\x1b[B"
+	KeyRight = "\x1b[C"
+	KeyLeft  = "\x1b[D"
+	KeyCtrlC = "\x03"
+	KeyEsc   = "\x1b"
 )
 
 // Read keys from stdin
@@ -38,6 +38,7 @@ func readKeys(keys chan<- string) {
 	}
 }
 
+// render game over message
 func gameOver(terminal *render.Terminal) {
 	terminal.Print("\r\n!!!!!!!!!!!!!!!!!!!")
 	terminal.Print("\r\n!!!              !!")
@@ -58,7 +59,7 @@ func main() {
 
 	// The matrix render must run before readKeys starts,
 	// or GetPos and readKeys will race on stdin
-	board := game.NewMatrix(BOARD_WIDTH, BOARD_HEIGHT, &terminal)
+	board := game.NewMatrix(BoardWidth, BoardHeight, &terminal)
 	err = board.Render()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error rendering board: %v\n", err)
@@ -84,11 +85,11 @@ func main() {
 			}
 
 			switch key {
-			case KEY_LEFT:
+			case KeyLeft:
 				board.MoveBlockX(game.Left)
-			case KEY_RIGHT:
+			case KeyRight:
 				board.MoveBlockX(game.Right)
-			case KEY_UP:
+			case KeyUp:
 				for board.MoveBlock() == game.Moved {
 					// no-op
 				}
@@ -101,10 +102,10 @@ func main() {
 			case "q", "Q":
 				terminal.Print("\r\nexit key pressed, exiting\r\n")
 				return
-			case KEY_CTRL_C:
+			case KeyCtrlC:
 				terminal.Print(" \r\nctrl+c pressed, exiting\r\n")
 				return
-			case KEY_ESC:
+			case KeyEsc:
 				terminal.Print("\r\nescape key pressed, exiting\r\n")
 				return
 			}

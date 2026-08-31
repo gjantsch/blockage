@@ -29,8 +29,8 @@ const (
 const (
 	// board cell fill state; kept as named symbols (not just " "/"*") so they
 	// can be swapped for more visible debug chars without touching logic
-	BL_NIL = " "
-	BL_FIL = "*"
+	Empty  = " "
+	Filled = "*"
 )
 
 // THE MATRIX
@@ -195,9 +195,6 @@ func (m *Matrix) WillCollide(x, y int) bool {
 	return false
 }
 
-// --- MOVE BLOCK FUNCTIONS
-// --- IS LEGAL MOVE or DO WE HIT ANOTHER BLOCK?
-//
 // In a simple and generic way we can move it to the next place and check that
 // no BLOCK_FILLED on the shape hits a BLOCK_FILLED on the matrix on the next
 // position.
@@ -313,9 +310,9 @@ func (m *Matrix) PutBlockAt(x, y int) {
 
 // update content matrix and terminal
 func (m *Matrix) UpdateContent(x, y int, filled bool) {
-	c := BL_NIL
+	c := Empty
 	if filled {
-		c = BL_FIL
+		c = Filled
 	}
 	if x < 0 || x >= m.width || y < 0 || y >= m.height {
 		return
