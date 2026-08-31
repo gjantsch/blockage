@@ -10,14 +10,6 @@ type Block struct {
 	Shape     [][]bool
 }
 
-func EmptyBlock() Block {
-	return Block{
-		X:     0,
-		Y:     0,
-		Shape: [][]bool{},
-	}
-}
-
 func (b *Block) IsEmpty() bool {
 	return len(b.Shape) == 0
 }

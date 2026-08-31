@@ -1,19 +1,18 @@
 package clock
 
 type Clock struct {
-	ptr   int
-	chars []string
+	ptr int
 }
 
 func NewClock() *Clock {
 	return &Clock{
-		ptr:   0,
-		chars: []string{"|", "/", "-", "\\"},
+		ptr: 0,
 	}
 }
 
 func (c *Clock) Next() string {
-	char := c.chars[c.ptr]
-	c.ptr = (c.ptr + 1) % len(c.chars)
+	spinner := [4]string{"|", "/", "-", "\\"}
+	char := spinner[c.ptr]
+	c.ptr = (c.ptr + 1) % 4
 	return char
 }
