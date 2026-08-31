@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -52,7 +51,7 @@ func main() {
 
 	terminal, err := render.NewTerminal()
 	if err != nil {
-		log.Fatalf("error initializing terminal: %v", err)
+		fmt.Fprintf(os.Stderr, "error initializing terminal: %v\n", err)
 		return
 	}
 	defer terminal.Close()
@@ -62,7 +61,7 @@ func main() {
 	board := game.NewMatrix(BOARD_WIDTH, BOARD_HEIGHT, &terminal)
 	err = board.Render()
 	if err != nil {
-		log.Fatalf("error rendering board: %v", err)
+		fmt.Fprintf(os.Stderr, "error rendering board: %v\n", err)
 		return
 	}
 	board.PickRandomBlock()
@@ -80,7 +79,7 @@ func main() {
 		select {
 		case key, ok := <-keys:
 			if !ok {
-				log.Println("key channel closed, exiting")
+				fmt.Println("key channel closed, exiting")
 				return
 			}
 
