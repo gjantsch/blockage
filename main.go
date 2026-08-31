@@ -47,13 +47,13 @@ func readKeys(keys chan<- string) {
 	}
 }
 
-func gameOver() {
-	fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
-	fmt.Printf("\r\n!!!              !!")
-	fmt.Printf("\r\n!!!  GAME OVER   !!")
-	fmt.Printf("\r\n!!!              !!")
-	fmt.Printf("\r\n!!!!!!!!!!!!!!!!!!!")
-	fmt.Printf("\r\n")
+func gameOver(terminal Terminal) {
+	terminal.Print("\r\n!!!!!!!!!!!!!!!!!!!")
+	terminal.Print("\r\n!!!              !!")
+	terminal.Print("\r\n!!!  GAME OVER   !!")
+	terminal.Print("\r\n!!!              !!")
+	terminal.Print("\r\n!!!!!!!!!!!!!!!!!!!")
+	terminal.Print("\r\n")
 }
 
 func main() {
@@ -128,7 +128,7 @@ func main() {
 			board.MoveBlock()
 			if board.BlockHitTop() || board.Collided {
 				if board.MovesCount == 1 && board.Collided {
-					gameOver()
+					gameOver(terminal)
 					return
 				}
 				board.CheckForFullRows()

@@ -31,7 +31,6 @@ type Terminal struct {
 	timerRow      int
 	statusRow     int
 	clock         Clock
-	frame         Frame
 }
 
 func NewTerminal() (error, Terminal) {
@@ -59,7 +58,6 @@ func NewTerminal() (error, Terminal) {
 	t.SetCursorOff()
 
 	t.clock = *NewClock()
-	t.frame = NewFrame(t.width, t.height)
 
 	return nil, t
 }
@@ -128,7 +126,7 @@ func (t *Terminal) SetCursorOn() {
 // Draw the board on the screen and start the basic calculations
 // to find the initial coordinates to render objects
 func (t *Terminal) DrawBoard(width, height int) error {
-	t.frame.Draw()
+	t.Print(DrawFrame(width, height))
 	err := t.computeBoardLayout(width, height)
 	if err != nil {
 		return fmt.Errorf("failed to compute board layout: %v", err)
@@ -173,4 +171,8 @@ func (t *Terminal) PrintAtBoard(x, y int, c string) {
 
 	fmt.Fprintf(os.Stdout, ANSI_GOTO_XY, boardRow, boardCol)
 	fmt.Print(c)
+}
+
+func (t *Terminal) Print(content string) {
+	fmt.Print(content)
 }
