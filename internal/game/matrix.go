@@ -1,16 +1,32 @@
 package game
 
 import (
-	"fmt"
 	"math/rand"
 )
 
-const (
-	DIR_UP    = -1
-	DIR_DOWN  = 1
-	DIR_LEFT  = -1
-	DIR_RIGHT = 1
+type XDirection int
 
+const (
+	Left  XDirection = -1
+	Right XDirection = 1
+)
+
+type YDirection int
+
+const (
+	Up   YDirection = -1
+	Down YDirection = 1
+)
+
+type MoveOutcome int
+
+const (
+	Moved MoveOutcome = iota
+	Landed
+	GameOver
+)
+
+const (
 	// board cell fill state; kept as named symbols (not just " "/"*") so they
 	// can be swapped for more visible debug chars without touching logic
 	BL_NIL = " "
@@ -28,12 +44,11 @@ type Matrix struct {
 	block           Block
 	blockX          int
 	blockY          int
-	BlockDirection  int
 	blocks          []Block
 	currentBlockPtr int
-	Collided        bool
-	MovesCount      int
-	RowsCompleted   int
+	collided        bool
+	movesCount      int
+	rowsCompleted   int
 }
 
 func NewMatrix(width int, height int, term Renderer) Matrix {
@@ -51,8 +66,8 @@ func NewMatrix(width int, height int, term Renderer) Matrix {
 }
 
 func (m *Matrix) PickRandomBlock() {
-	m.Collided = false
-	m.MovesCount = 0
+	m.collided = false
+	m.movesCount = 0
 	m.currentBlockPtr = rand.Intn(len(m.blocks))
 	b := m.blocks[m.currentBlockPtr]
 	m.block = b.Clone()
@@ -189,44 +204,44 @@ func (m *Matrix) WillCollide(x, y int) bool {
 // Key decision:
 // - MoveBlockX/Y will do the actual move.
 // - NextX/Y will return the next coordinate
-func (m *Matrix) NextX(direction int) int {
+func (m *Matrix) NextX(direction XDirection) int {
 	nextX := m.blockX
-	if direction == DIR_LEFT && m.blockX > 0 {
+	if direction == Left && m.blockX > 0 {
 		nextX--
 	}
 
-	if direction == DIR_RIGHT && m.blockX < m.width-m.block.Width() {
+	if direction == Right && m.blockX < m.width-m.block.Width() {
 		nextX++
 	}
 
 	if m.WillCollide(nextX, m.blockY) {
-		m.Collided = true
+		m.collided = true
 		return m.blockX
 	}
 
 	return nextX
 }
 
-func (m *Matrix) NextY(direction int) int {
+func (m *Matrix) NextY(direction YDirection) int {
 	nextY := m.blockY
 
-	if direction == DIR_UP && m.blockY > 0 {
+	if direction == Up && m.blockY > 0 {
 		nextY--
 	}
 
-	if direction == DIR_DOWN && m.blockY < m.height-m.block.Height() {
+	if direction == Down && m.blockY < m.height-m.block.Height() {
 		nextY++
 	}
 
 	if m.WillCollide(m.blockX, nextY) {
-		m.Collided = true
+		m.collided = true
 		return m.blockY
 	}
 
 	return nextY
 }
 
-func (m *Matrix) CheckForFullRows() {
+func (m *Matrix) CheckForFullRows() int {
 	removed := true
 	for removed {
 		removed = false
@@ -244,29 +259,38 @@ func (m *Matrix) CheckForFullRows() {
 						m.UpdateContent(nx, uy, BL_NIL)
 					}
 				}
-				m.RowsCompleted++
+				m.rowsCompleted++
 			}
 		}
 	}
-
+	return m.rowsCompleted
 }
 
-func (m *Matrix) MoveBlockX(direction int) {
+func (m *Matrix) MoveBlockX(direction XDirection) {
 	m.RemoveBlock()
 	m.blockX = m.NextX(direction)
 	m.PutBlock()
 }
 
-func (m *Matrix) MoveBlockY(direction int) {
+func (m *Matrix) MoveBlockY(direction YDirection) {
 	m.RemoveBlock()
 	m.blockY = m.NextY(direction)
 	m.PutBlock()
 }
 
-func (m *Matrix) MoveBlock() {
-	m.MovesCount++
-	m.MoveBlockY(m.BlockDirection)
-	m.terminal.StatusBar(fmt.Sprintf("%d rows completed", m.RowsCompleted))
+func (m *Matrix) MoveBlock() MoveOutcome {
+	m.movesCount++
+	m.MoveBlockY(Up)
+
+	if m.movesCount == 1 && m.collided {
+		return GameOver
+	}
+
+	if m.BlockHitTop() || m.collided {
+		return Landed
+	}
+
+	return Moved
 }
 
 func (m *Matrix) PlaceBlockAtBottom() {

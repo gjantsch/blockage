@@ -35,32 +35,31 @@ type Terminal struct {
 	clock         *clock.Clock
 }
 
-func NewTerminal() (error, Terminal) {
+func NewTerminal() (Terminal, error) {
 	t := Terminal{}
 	t.fd = int(os.Stdout.Fd())
 
 	if !term.IsTerminal(t.fd) {
-		return fmt.Errorf("must run on a terminal environment"), Terminal{}
+		return Terminal{}, fmt.Errorf("must run on a terminal environment")
 	}
 
 	w, h, err := term.GetSize(t.fd)
 	if err != nil {
-		return fmt.Errorf("failed to get terminal size: %v", err), Terminal{}
+		return Terminal{}, fmt.Errorf("failed to get terminal size: %v", err)
 	}
 	t.width = w
 	t.height = h
 
 	// we must go raw mode
-	previousState, err := term.MakeRaw(int(os.Stdin.Fd()))
+	t.previousState, err = term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
-		return fmt.Errorf("failed to set terminal to raw mode: %v", err), Terminal{}
+		return Terminal{}, fmt.Errorf("failed to set terminal to raw mode: %v", err)
 	}
-	t.previousState = previousState
 
 	t.SetCursorOff()
 	t.clock = clock.NewClock()
 
-	return nil, t
+	return t, nil
 }
 
 func (t *Terminal) Close() {

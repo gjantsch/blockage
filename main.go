@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -21,8 +22,6 @@ const (
 	KEY_LEFT   = "\x1b[D"
 	KEY_CTRL_C = "\x03"
 	KEY_ESC    = "\x1b"
-
-	KEY_Q = "q"
 )
 
 // Read keys from stdin
@@ -51,13 +50,15 @@ func gameOver(terminal *render.Terminal) {
 
 func main() {
 
-	err, terminal := render.NewTerminal()
-	defer terminal.Close()
+	terminal, err := render.NewTerminal()
 	if err != nil {
 		log.Fatalf("error initializing terminal: %v", err)
 		return
 	}
+	defer terminal.Close()
 
+	// The matrix render must run before readKeys starts,
+	// or GetPos and readKeys will race on stdin
 	board := game.NewMatrix(BOARD_WIDTH, BOARD_HEIGHT, &terminal)
 	err = board.Render()
 	if err != nil {
@@ -66,7 +67,6 @@ func main() {
 	}
 	board.PickRandomBlock()
 	board.PlaceBlockAtBottom()
-	board.BlockDirection = game.DIR_UP
 
 	keys := make(chan string, 1)
 	go readKeys(keys)
@@ -86,12 +86,12 @@ func main() {
 
 			switch key {
 			case KEY_LEFT:
-				board.MoveBlockX(game.DIR_LEFT)
+				board.MoveBlockX(game.Left)
 			case KEY_RIGHT:
-				board.MoveBlockX(game.DIR_RIGHT)
+				board.MoveBlockX(game.Right)
 			case KEY_UP:
-				for !board.BlockHitTop() && !board.Collided {
-					board.MoveBlock()
+				for board.MoveBlock() == game.Moved {
+					// no-op
 				}
 			case "r", "R":
 				board.RotateBlock()
@@ -118,13 +118,18 @@ func main() {
 				break
 			}
 
-			board.MoveBlock()
-			if board.BlockHitTop() || board.Collided {
-				if board.MovesCount == 1 && board.Collided {
-					gameOver(&terminal)
-					return
-				}
-				board.CheckForFullRows()
+			outcome := board.MoveBlock()
+			switch outcome {
+			case game.GameOver:
+				gameOver(&terminal)
+				return
+
+			case game.Landed:
+				// check for full rows
+				rowsCompleted := board.CheckForFullRows()
+				terminal.StatusBar(fmt.Sprintf("%d rows completed", rowsCompleted))
+
+				// place a new block at the bottom
 				board.PickRandomBlock()
 				board.PlaceBlockAtBottom()
 			}
