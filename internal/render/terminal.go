@@ -13,11 +13,11 @@ import (
 
 const (
 	// ANSI Device Status Report sequence
-	DSR_QUERY_POSITION = "\x1b[6n"
-	ANSI_CLEAR_SCREEN  = "\x1b[2J\x1b[H"
-	ANSI_PRINT_AT_XY   = "\x1b[%d;%dH%s"
-	ANSI_CURSOR_OFF    = "\x1b[?25l"
-	ANSI_CURSOR_ON     = "\x1b[?25h"
+	DsrQueryPosition = "\x1b[6n"
+	AnsiClearScreen  = "\x1b[2J\x1b[H"
+	AnsiPrintAtXY    = "\x1b[%d;%dH%s"
+	AnsiCursorOff    = "\x1b[?25l"
+	AnsiCursorOn     = "\x1b[?25h"
 )
 
 // THE TERMINAL
@@ -73,7 +73,7 @@ func (t *Terminal) NewLine() {
 
 func (t *Terminal) GetPos() (row, col int, err error) {
 	// request cursor position
-	_, err = os.Stdout.WriteString(DSR_QUERY_POSITION)
+	_, err = os.Stdout.WriteString(DsrQueryPosition)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -105,21 +105,21 @@ func (t *Terminal) GetPos() (row, col int, err error) {
 }
 
 func (t *Terminal) PrintAt(row, col int, c string) {
-	fmt.Fprintf(os.Stdout, ANSI_PRINT_AT_XY, row, col, c)
+	fmt.Fprintf(os.Stdout, AnsiPrintAtXY, row, col, c)
 }
 
 func (t *Terminal) ClearScreen() {
-	fmt.Printf(ANSI_CLEAR_SCREEN)
+	fmt.Printf(AnsiClearScreen)
 }
 
 // Turn off the cursor
 func (t *Terminal) SetCursorOff() {
-	fmt.Print(ANSI_CURSOR_OFF)
+	fmt.Print(AnsiCursorOff)
 }
 
 // Tur on the cursor
 func (t *Terminal) SetCursorOn() {
-	fmt.Print(ANSI_CURSOR_ON)
+	fmt.Print(AnsiCursorOn)
 }
 
 // Draw the board on the screen and start the basic calculations
@@ -168,7 +168,7 @@ func (t *Terminal) PrintAtBoard(x, y int, c string) {
 	boardRow := t.boardStartRow + y
 	boardCol := t.boardStartCol + (x * 2) + 1
 
-	fmt.Fprintf(os.Stdout, ANSI_PRINT_AT_XY, boardRow, boardCol, c)
+	fmt.Fprintf(os.Stdout, AnsiPrintAtXY, boardRow, boardCol, c)
 }
 
 func (t *Terminal) Print(content string) {
