@@ -4,10 +4,9 @@ package game
 // hold a single Block data
 // with position and form
 type Block struct {
-	X         int
-	Y         int
-	Direction int
-	Shape     [][]bool
+	X     int
+	Y     int
+	Shape [][]bool
 }
 
 func (b *Block) IsEmpty() bool {
@@ -101,7 +100,23 @@ func InitBlocks() []Block {
 			Y: 0,
 			Shape: [][]bool{
 				[]bool{true, true, true},
-				[]bool{false, true, false},
+				[]bool{true, false, false},
+			},
+		},
+		Block{
+			X: 0,
+			Y: 0,
+			Shape: [][]bool{
+				[]bool{true, true, true},
+				[]bool{false, false, true},
+			},
+		},
+		Block{
+			X: 0,
+			Y: 0,
+			Shape: [][]bool{
+				[]bool{true, true, true},
+				[]bool{true, false, true},
 			},
 		},
 		Block{
@@ -113,14 +128,7 @@ func InitBlocks() []Block {
 				[]bool{false, false, true},
 			},
 		},
-		Block{
-			X: 0,
-			Y: 0,
-			Shape: [][]bool{
-				[]bool{true, true, true},
-				[]bool{false, false, true},
-			},
-		},
+
 		Block{
 			X: 0,
 			Y: 0,
@@ -143,21 +151,6 @@ func InitBlocks() []Block {
 			Shape: [][]bool{
 				[]bool{true},
 				[]bool{true},
-			},
-		},
-		Block{
-			X: 0,
-			Y: 0,
-			Shape: [][]bool{
-				[]bool{true, true, true},
-				[]bool{true, false, true},
-			},
-		}, Block{
-			X: 0,
-			Y: 0,
-			Shape: [][]bool{
-				[]bool{true, true, true},
-				[]bool{false, false, true},
 			},
 		},
 	}

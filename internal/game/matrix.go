@@ -180,6 +180,10 @@ func (m *Matrix) PutBlock() {
 }
 
 // --- COLISION DETECTION
+// The collision happens only when a BLOCK_FILLED
+// on the shape hits a BLOCK_FILLED on the matrix
+// Lateral collision with the board walls are just
+// constraints, and same for the top.
 func (m *Matrix) WillCollide(x, y int) bool {
 	for i, row := range m.block.Shape {
 		for j, c := range row {
@@ -273,6 +277,19 @@ func (m *Matrix) MoveBlockX(direction XDirection) {
 func (m *Matrix) MoveBlockY(direction YDirection) {
 	m.RemoveBlock()
 	m.blockY = m.NextY(direction)
+	m.PutBlock()
+}
+
+// Optimized version of MoveBlock
+// for quick landing without consume
+// the Put/Remove for every move,
+// just one at the end
+func (m *Matrix) LandBlock() {
+	m.movesCount++
+	m.RemoveBlock()
+	for !(m.BlockHitTop() || m.collided) {
+		m.blockY = m.NextY(Up)
+	}
 	m.PutBlock()
 }
 
