@@ -56,101 +56,100 @@ func (b *Block) Rotate() {
 func InitBlocks() []Block {
 
 	b := []Block{
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true},
+				{true},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true, false},
-				[]bool{true, true, true},
+				{true, true, false},
+				{true, true, true},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true},
-				[]bool{true, true},
-				[]bool{true, true},
+				{true, true},
+				{true, true},
+				{true, true},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true, true},
+				{true, true, true},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true, true},
-				[]bool{false, true, false},
+				{true, true, true},
+				{false, true, false},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true, true},
-				[]bool{true, false, false},
+				{true, true, true},
+				{true, false, false},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true, true},
-				[]bool{false, false, true},
+				{true, true, true},
+				{false, false, true},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true, true},
-				[]bool{true, false, true},
+				{true, true, true},
+				{true, false, true},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true, true},
-				[]bool{false, true, true},
-				[]bool{false, false, true},
+				{true, true, true},
+				{false, true, true},
+				{false, false, true},
 			},
 		},
-
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true},
-				[]bool{false, true},
+				{true, true},
+				{false, true},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true, true},
-				[]bool{true, true},
+				{true, true},
+				{true, true},
 			},
 		},
-		Block{
+		{
 			X: 0,
 			Y: 0,
 			Shape: [][]bool{
-				[]bool{true},
-				[]bool{true},
+				{true},
+				{true},
 			},
 		},
 	}
