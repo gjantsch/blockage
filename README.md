@@ -1,7 +1,9 @@
+```text
 ▗▄▄▖ ▗▖    ▗▄▖  ▗▄▄▖▗▖ ▗▖ ▗▄▖  ▗▄▄▖▗▄▄▄▖
 ▐▌ ▐▌▐▌   ▐▌ ▐▌▐▌   ▐▌▗▞▘▐▌ ▐▌▐▌   ▐▌   
 ▐▛▀▚▖▐▌   ▐▌ ▐▌▐▌   ▐▛▚▖ ▐▛▀▜▌▐▌▝▜▌▐▛▀▀▘
 ▐▙▄▞▘▐▙▄▄▖▝▚▄▞▘▝▚▄▄▖▐▌ ▐▌▐▌ ▐▌▝▚▄▞▘▐▙▄▄▖
+```
                                                                                 
 An ascending-block puzzle game for the terminal, written in pure Go. No graphics library, no TUI framework — just ASCII characters and ANSI escape codes drawn directly to your shell.
 
