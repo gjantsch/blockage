@@ -5,9 +5,11 @@
 ▐▙▄▞▘▐▙▄▄▖▝▚▄▞▘▝▚▄▄▖▐▌ ▐▌▐▌ ▐▌▝▚▄▞▘▐▙▄▄▖
 ```
                                                                                 
-An ascending-block puzzle game for the terminal, written in pure Go. No graphics library, no TUI framework — just ASCII characters and ANSI escape codes drawn directly to your shell.
+A puzzle game for the terminal, written in pure Go. No graphics library, no TUI framework: just ASCII characters and ANSI escape codes drawn directly to your shell.
 
-The motivation is simple: nostalgia. There is something deeply satisfying about watching characters animate on a blank terminal screen, crafted entirely out of whitespace, pipes, and a handful of control sequences. `blockage` is an exercise in that tradition.
+The motivation is simple: nostalgia. 
+
+There is something deeply satisfying about watching characters animate on a blank terminal screen, crafted entirely out of whitespace, pipes, and a handful of control sequences. `blockage` is an exercise in that tradition.
 
 ---
 
@@ -61,8 +63,6 @@ internal/
     clock/clock.go       spinner animation
     frame/frame.go       ASCII border builder
 ```
-
-`game.Matrix` depends only on `game.Renderer` — a three-method interface — so the entire game logic is testable without a terminal. `render.Terminal` is the only concrete implementation.
 
 ### Terminal layout without a framework
 
