@@ -11,9 +11,9 @@ The motivation is simple: nostalgia.
 
 There is something deeply satisfying about ASCII animations on a blank terminal screen, crafted entirely out of whitespace, asterisks, and a handful of control sequences. `blockage` is an exercise in that tradition.
 
-The similarity with any known game is not coincidence. The matrix size was chosen to be ported to an Arduino with a  8x32 led matrix.
+The similarity with any known game is not coincidence. The matrix size was chosen to be ported to an Arduino with a  8x32 led matrix. And bottom to top direction is just because I wanted to do something different :D
 
-<img width="160" height="657" alt="blockage" src="https://github.com/user-attachments/assets/dadd761b-32fa-407e-9e03-22d4919e8682" />
+<img width="210" height="840" alt="screen" src="https://github.com/user-attachments/assets/f3d60115-aafe-4b5a-84df-87e9754a70bc" />
 
 ---
 
