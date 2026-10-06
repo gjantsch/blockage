@@ -9,7 +9,11 @@ A puzzle game for the terminal, written in pure Go. No graphics library, no TUI 
 
 The motivation is simple: nostalgia. 
 
-There is something deeply satisfying about watching characters animate on a blank terminal screen, crafted entirely out of whitespace, pipes, and a handful of control sequences. `blockage` is an exercise in that tradition.
+There is something deeply satisfying about ASCII animations on a blank terminal screen, crafted entirely out of whitespace, asterisks, and a handful of control sequences. `blockage` is an exercise in that tradition.
+
+The similarity with any known game is not coincidence. The matrix size was chosen to be ported to an Arduino with a  8x32 led matrix.
+
+<img width="160" height="657" alt="blockage" src="https://github.com/user-attachments/assets/dadd761b-32fa-407e-9e03-22d4919e8682" />
 
 ---
 
